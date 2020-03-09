@@ -46,7 +46,7 @@ Features
 -------------
 Install from `npm` (only support RN >= 0.40)
 ```bash
-npm install @wwimmo/react-native-sketch-canvas --save
+npm install dansiemens/react-native-sketch-canvas --save
 ```
 Link native code
 ```bash
