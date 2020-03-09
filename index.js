@@ -27,7 +27,7 @@ export default class RNImageEditor extends React.Component {
         strokeSelectedComponent: PropTypes.func,
         strokeWidthComponent: PropTypes.func,
 
-        strokeColors: PropTypes.arrayOf(PropTypes.shape({ color: PropTypes.string })),
+        strokeColor: PropTypes.string,
         defaultStrokeIndex: PropTypes.number,
         defaultStrokeWidth: PropTypes.number,
 
@@ -92,26 +92,7 @@ export default class RNImageEditor extends React.Component {
         strokeSelectedComponent: null,
         strokeWidthComponent: null,
 
-        strokeColors: [
-            { color: "#000000" },
-            { color: "#FF0000" },
-            { color: "#00FFFF" },
-            { color: "#0000FF" },
-            { color: "#0000A0" },
-            { color: "#ADD8E6" },
-            { color: "#800080" },
-            { color: "#FFFF00" },
-            { color: "#00FF00" },
-            { color: "#FF00FF" },
-            { color: "#FFFFFF" },
-            { color: "#C0C0C0" },
-            { color: "#808080" },
-            { color: "#FFA500" },
-            { color: "#A52A2A" },
-            { color: "#800000" },
-            { color: "#008000" },
-            { color: "#808000" }
-        ],
+        strokeColor: "#000000",
         alphlaValues: ["33", "77", "AA", "FF"],
         defaultStrokeIndex: 0,
         defaultStrokeWidth: 3,
@@ -142,7 +123,7 @@ export default class RNImageEditor extends React.Component {
         super(props);
 
         this.state = {
-            color: props.strokeColors[props.defaultStrokeIndex].color,
+            color: props.strokeColor,
             strokeWidth: props.defaultStrokeWidth,
             alpha: "FF"
         };
@@ -357,7 +338,7 @@ export default class RNImageEditor extends React.Component {
                 <ImageEditor
                     ref={(ref) => (this._sketchCanvas = ref)}
                     style={this.props.canvasStyle}
-                    strokeColor={this.state.color + (this.state.color.length === 9 ? "" : this.state.alpha)}
+                    strokeColor={this.props.strokeColor}
                     shapeConfiguration={this.props.shapeConfiguration}
                     onStrokeStart={this.props.onStrokeStart}
                     onStrokeChanged={this.props.onStrokeChanged}
@@ -373,16 +354,6 @@ export default class RNImageEditor extends React.Component {
                     permissionDialogTitle={this.props.permissionDialogTitle}
                     permissionDialogMessage={this.props.permissionDialogMessage}
                 />
-                <View style={{ flexDirection: "row" }}>
-                    <FlatList
-                        data={this.props.strokeColors}
-                        extraData={this.state}
-                        keyExtractor={() => Math.ceil(Math.random() * 10000000).toString()}
-                        renderItem={this._renderItem}
-                        horizontal
-                        showsHorizontalScrollIndicator={false}
-                    />
-                </View>
             </View>
         );
     }
