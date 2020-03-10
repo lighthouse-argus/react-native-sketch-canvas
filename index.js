@@ -28,6 +28,7 @@ export default class RNImageEditor extends React.Component {
         strokeWidthComponent: PropTypes.func,
 
         strokeColor: PropTypes.string,
+        strokeWidth: PropTypes.number,
         defaultStrokeIndex: PropTypes.number,
         defaultStrokeWidth: PropTypes.number,
 
@@ -93,6 +94,7 @@ export default class RNImageEditor extends React.Component {
         strokeWidthComponent: null,
 
         strokeColor: "#000000",
+        strokeWidth: 3,
         alphlaValues: ["33", "77", "AA", "FF"],
         defaultStrokeIndex: 0,
         defaultStrokeWidth: 3,
@@ -124,7 +126,7 @@ export default class RNImageEditor extends React.Component {
 
         this.state = {
             color: props.strokeColor,
-            strokeWidth: props.defaultStrokeWidth,
+            strokeWidth: props.strokeWidth,
             alpha: "FF"
         };
 
@@ -344,7 +346,7 @@ export default class RNImageEditor extends React.Component {
                     onStrokeChanged={this.props.onStrokeChanged}
                     onStrokeEnd={this.props.onStrokeEnd}
                     user={this.props.user}
-                    strokeWidth={this.state.strokeWidth}
+                    strokeWidth={this.props.strokeWidth}
                     onSketchSaved={(success, path) => this.props.onSketchSaved(success, path)}
                     onShapeSelectionChanged={(isShapeSelected) => this.props.onShapeSelectionChanged(isShapeSelected)}
                     touchEnabled={this.props.touchEnabled}
