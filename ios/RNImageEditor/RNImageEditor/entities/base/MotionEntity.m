@@ -24,7 +24,8 @@
                      borderStrokeWidth: (CGFloat)borderStrokeWidth
                      borderStrokeColor: (UIColor *)borderStrokeColor
                      entityStrokeWidth: (CGFloat)entityStrokeWidth
-                     entityStrokeColor: (UIColor *)entityStrokeColor {
+                     entityStrokeColor: (UIColor *)entityStrokeColor
+                     entityId: (NSString *)entityId {
     
     self = [super initWithFrame:CGRectMake(parentCenterX, parentCenterY, width, height)];
     
@@ -43,7 +44,7 @@
         self.borderStrokeColor = borderStrokeColor;
         self.entityStrokeWidth = entityStrokeWidth;
         self.entityStrokeColor = entityStrokeColor;
-        
+        self.entityId = entityId;
         self.backgroundColor = [UIColor clearColor];
     }
     return self;
@@ -51,6 +52,10 @@
 
 - (BOOL)isEntitySelected {
     return self.isSelected;
+}
+
+- (BOOL)entityHasId:(NSString *)entityId {
+    return [self.entityId isEqualToString: entityId];
 }
 
 - (BOOL)isPointInEntity:(CGPoint)point {
