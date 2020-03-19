@@ -59,13 +59,41 @@
     CGContextSetLineWidth(contextRef, self.entityStrokeWidth / self.scale);
     CGContextSetStrokeColorWithColor(contextRef, [self.entityStrokeColor CGColor]);
     
-    CGRect entityRect = CGRectMake(0, 0, rect.size.width, rect.size.height);
-    CGFloat padding = (self.bordersPadding + self.entityStrokeWidth) / self.scale;
-    entityRect = CGRectInset(entityRect, padding , padding);
-    [[UIColor blueColor] setFill];
-    UIRectFill(entityRect);
+    // CGRect entityRect = CGRectMake(0, 0, rect.size.width, rect.size.height);
+    // CGFloat padding = (self.bordersPadding + self.entityStrokeWidth) / self.scale;
+    // entityRect = CGRectInset(entityRect, padding , padding);
+    // [[UIColor redColor] setFill];
+    // UIRectFill(entityRect);
     
-    CGContextStrokeRect(contextRef, entityRect);
+    // CGFloat radius = rect.size.width / 2;
+    
+    // CGRect circleRect = CGRectMake(0, 0, radius, radius);
+    // circleRect = CGRectInset(circleRect, padding , padding);
+    
+    // CGContextStrokeEllipseInRect(contextRef, circleRect);
+    // CGContextStrokeRect(contextRef, entityRect);
+
+    // CGContextRef context = UIGraphicsGetCurrentContext();
+
+    CGPoint point = CGPointMake(0, 50);
+    CGFloat radius = 20.0;
+    CGFloat lineLength = 45.0;
+
+    CGContextMoveToPoint(contextRef, point.x, point.y);
+    point.x += lineLength;
+    CGContextAddLineToPoint(contextRef, point.x, point.y);
+    point.x += radius;
+    CGContextAddArc(contextRef, point.x, point.y, radius, M_PI, M_PI * 2.0, NO);
+    point.x += radius * 2.0;
+    CGContextAddArc(contextRef, point.x, point.y, radius, M_PI, M_PI * 2.0, NO);
+    point.x += radius * 2.0;
+    CGContextAddArc(contextRef, point.x, point.y, radius, M_PI, M_PI * 2.0, NO);
+    point.x += radius * 2.0;
+    CGContextAddArc(contextRef, point.x, point.y, radius, M_PI, M_PI * 2.0, NO);
+    point.x += lineLength + radius;
+    CGContextAddLineToPoint(contextRef, point.x, point.y);
+
+    CGContextDrawPath(contextRef, kCGPathStroke);
 }
 
 @end

@@ -682,7 +682,7 @@
     CGFloat centerX = CGRectGetMidX(self.bounds);
     CGFloat centerY = CGRectGetMidY(self.bounds);
     
-    CloudEntity *entity = [[RectEntity alloc]
+    CloudEntity *entity = [[CloudEntity alloc]
                           initAndSetupWithParent:self.bounds.size.width
                           parentHeight:self.bounds.size.height
                           parentCenterX:centerX
