@@ -23,14 +23,15 @@ public class TriangleEntity extends MotionEntity {
     private Bitmap mTriangleBitmap;
     private Canvas mTriangleCanvas;
 
-    public TriangleEntity(@NonNull Layer layer,
+    public TriangleEntity(String entityId, 
+                        @NonNull Layer layer,
                         @IntRange(from = 1) int canvasWidth,
                         @IntRange(from = 1) int canvasHeight, 
                         @IntRange(from = 1) int sideLength, 
                         @Nullable Float bordersPadding, 
                         @Nullable Float strokeWidth, 
                         @Nullable Integer strokeColor) {
-        super(layer, canvasWidth, canvasHeight);
+        super(entityId, layer, canvasWidth, canvasHeight);
 
         this.mSideLength = sideLength;
         this.mStrokeWidth = 5;

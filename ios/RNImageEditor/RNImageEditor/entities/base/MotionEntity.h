@@ -30,6 +30,7 @@
 @property (nonatomic) UIColor* borderStrokeColor;
 @property (nonatomic) CGFloat entityStrokeWidth;
 @property (nonatomic) UIColor* entityStrokeColor;
+@property (nonatomic) NSString* entityId;
 
 
 - (instancetype)initAndSetupWithParent: (NSInteger)parentWidth
@@ -44,9 +45,11 @@
                      borderStrokeWidth: (CGFloat)borderStrokeWidth
                      borderStrokeColor: (UIColor *)borderStrokeColor
                      entityStrokeWidth: (CGFloat)entityStrokeWidth
-                     entityStrokeColor: (UIColor *)entityStrokeColor;
+                     entityStrokeColor: (UIColor *)entityStrokeColor
+                     entityId: (NSString *) entityId;
 
 - (BOOL)isEntitySelected;
+- (BOOL)entityHasId: (NSString *)entityId;
 - (BOOL)isPointInEntity:(CGPoint)point;
 - (void)setIsSelected:(BOOL)isSelected;
 - (void)rotateEntityBy:(CGFloat)rotationInRadians;

@@ -22,10 +22,11 @@ public class CircleEntity extends MotionEntity {
     private Bitmap mCircleBitmap;
     private Canvas mCircleCanvas;
 
-    public CircleEntity(@NonNull Layer layer,
+    public CircleEntity(String entityId, 
+                        @NonNull Layer layer,
                         @IntRange(from = 1) int canvasWidth,
                         @IntRange(from = 1) int canvasHeight, int circleRadius, @Nullable Float bordersPadding, @Nullable Float strokeWidth, @Nullable Integer strokeColor) {
-        super(layer, canvasWidth, canvasHeight);
+        super(entityId, layer, canvasWidth, canvasHeight);
 
         this.mCircleRadius = circleRadius;
         this.mStrokeWidth = 5;

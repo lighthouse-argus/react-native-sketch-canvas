@@ -52,6 +52,11 @@ public abstract class MotionEntity {
     protected int canvasHeight;
 
     /**
+     * Entity Id
+     */
+    protected String entityId;
+
+    /**
      * Destination points of the entity
      * 5 points. Size of array - 10; Starting upper left corner, clockwise
      * last point is the same as first to close the circle
@@ -71,9 +76,10 @@ public abstract class MotionEntity {
     @NonNull
     private BorderStyle borderStyle = BorderStyle.DASHED;
 
-    public MotionEntity(@NonNull Layer layer,
+    public MotionEntity(String entityId, @NonNull Layer layer,
                         @IntRange(from = 1) int canvasWidth,
                         @IntRange(from = 1) int canvasHeight) {
+        this.entityId = entityId;
         this.layer = layer;
         this.canvasWidth = canvasWidth;
         this.canvasHeight = canvasHeight;
@@ -81,6 +87,10 @@ public abstract class MotionEntity {
 
     public boolean isSelected() {
         return isSelected;
+    }
+
+    public boolean hasId(String entityId) {
+        return this.entityId.equals(entityId);
     }
 
     public void setIsSelected(boolean isSelected) {

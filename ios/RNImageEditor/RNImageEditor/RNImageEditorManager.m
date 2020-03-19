@@ -130,6 +130,13 @@ RCT_EXPORT_METHOD(transferToBase64:(nonnull NSNumber *)reactTag type: (NSString*
     }];
 }
 
+RCT_EXPORT_METHOD(deleteShapeById:(nonnull NSNumber *)reactTag shapeId:(NSString *)shapeId)
+{
+    [self runCanvas:reactTag block:^(RNImageEditor *canvas) {
+        [canvas deleteEntityById: shapeId];
+    }];
+}
+
 RCT_EXPORT_METHOD(deleteSelectedShape:(nonnull NSNumber *)reactTag)
 {
     [self runCanvas:reactTag block:^(RNImageEditor *canvas) {
@@ -144,10 +151,10 @@ RCT_EXPORT_METHOD(unselectShape:(nonnull NSNumber *)reactTag)
     }];
 }
 
-RCT_EXPORT_METHOD(addShape:(nonnull NSNumber *)reactTag shapeType:(NSString *) shapeType textShapeFontType:(NSString *) textShapeFontType textShapeFontSize:(nonnull NSNumber *) textShapeFontSize textShapeText:(NSString *) textShapeText imageShapeAsset:(NSString *)imageShapeAsset)
+RCT_EXPORT_METHOD(addShape:(nonnull NSNumber *)reactTag shapeId:(NSString *) shapeId shapeType:(NSString *) shapeType textShapeFontType:(NSString *) textShapeFontType textShapeFontSize:(nonnull NSNumber *) textShapeFontSize textShapeText:(NSString *) textShapeText imageShapeAsset:(NSString *)imageShapeAsset)
 {
     [self runCanvas:reactTag block:^(RNImageEditor *canvas) {
-        [canvas addEntity:shapeType textShapeFontType:textShapeFontType textShapeFontSize:textShapeFontSize textShapeText:textShapeText imageShapeAsset:imageShapeAsset];
+        [canvas addEntityWithId:shapeId entityType:shapeType textShapeFontType:textShapeFontType textShapeFontSize:textShapeFontSize textShapeText:textShapeText imageShapeAsset:imageShapeAsset];
     }];
 }
 

@@ -595,36 +595,36 @@
     }
 }
 
-- (void)addEntity:(NSString *)entityType textShapeFontType:(NSString *)textShapeFontType textShapeFontSize:(NSNumber *)textShapeFontSize textShapeText:(NSString *)textShapeText imageShapeAsset:(NSString *)imageShapeAsset {
+- (void)addEntityWithId:(NSString *)entityId entityType:(NSString *)entityType textShapeFontType:(NSString *)textShapeFontType textShapeFontSize:(NSNumber *)textShapeFontSize textShapeText:(NSString *)textShapeText imageShapeAsset:(NSString *)imageShapeAsset {
     
     switch ([@[@"Circle", @"Rect", @"Square", @"Triangle", @"Arrow", @"Text", @"Image"] indexOfObject: entityType]) {
         case 1:
-            [self addRectEntity:300 andHeight:150];
+            [self addRectEntity:entityId width:300 andHeight:150];
             break;
         case 2:
-            [self addRectEntity:300 andHeight:300];
+            [self addRectEntity:entityId width:300 andHeight:300];
             break;
         case 3:
-            [self addTriangleEntity];
+            [self addTriangleEntity: entityId];
             break;
         case 4:
-            [self addArrowEntity];
+            [self addArrowEntity: entityId];
             break;
         case 5:
-            [self addTextEntity:textShapeFontType withFontSize:textShapeFontSize withText:textShapeText];
+            [self addTextEntity:entityId fontType:textShapeFontType withFontSize:textShapeFontSize withText:textShapeText];
             break;
         case 6:
             // TODO: ImageEntity Doesn't exist yet
         case 0:
         case NSNotFound:
         default: {
-            [self addCircleEntity];
+            [self addCircleEntity: entityId];
             break;
         }
     }
 }
 
-- (void)addCircleEntity {
+- (void)addCircleEntity:(NSString *)entityId {
     CGFloat centerX = CGRectGetMidX(self.bounds);
     CGFloat centerY = CGRectGetMidY(self.bounds);
     
@@ -641,14 +641,15 @@
                             borderStrokeWidth:self.entityBorderStrokeWidth
                             borderStrokeColor:self.entityBorderColor
                             entityStrokeWidth:self.entityStrokeWidth
-                            entityStrokeColor:self.entityStrokeColor];
+                            entityStrokeColor:self.entityStrokeColor
+                            entityId: entityId];
     
     [self.motionEntities addObject:entity];
     [self onShapeSelectionChanged:entity];
     [self selectEntity:entity];
 }
 
-- (void)addRectEntity:(NSInteger)width andHeight: (NSInteger)height {
+- (void)addRectEntity:(NSString *)entityId width:(NSInteger)width andHeight: (NSInteger)height {
     CGFloat centerX = CGRectGetMidX(self.bounds);
     CGFloat centerY = CGRectGetMidY(self.bounds);
     
@@ -665,14 +666,15 @@
                           borderStrokeWidth:self.entityBorderStrokeWidth
                           borderStrokeColor:self.entityBorderColor
                           entityStrokeWidth:self.entityStrokeWidth
-                          entityStrokeColor:self.entityStrokeColor];
+                          entityStrokeColor:self.entityStrokeColor
+                          entityId: entityId];
     
     [self.motionEntities addObject:entity];
     [self onShapeSelectionChanged:entity];
     [self selectEntity:entity];
 }
 
-- (void)addTriangleEntity {
+- (void)addTriangleEntity:(NSString *)entityId {
     CGFloat centerX = CGRectGetMidX(self.bounds);
     CGFloat centerY = CGRectGetMidY(self.bounds);
     
@@ -689,14 +691,15 @@
                               borderStrokeWidth:self.entityBorderStrokeWidth
                               borderStrokeColor:self.entityBorderColor
                               entityStrokeWidth:self.entityStrokeWidth
-                              entityStrokeColor:self.entityStrokeColor];
+                              entityStrokeColor:self.entityStrokeColor
+                              entityId: entityId];
     
     [self.motionEntities addObject:entity];
     [self onShapeSelectionChanged:entity];
     [self selectEntity:entity];
 }
 
-- (void)addArrowEntity {
+- (void)addArrowEntity:(NSString *)entityId {
     CGFloat centerX = CGRectGetMidX(self.bounds);
     CGFloat centerY = CGRectGetMidY(self.bounds);
     
@@ -713,14 +716,15 @@
                               borderStrokeWidth:self.entityBorderStrokeWidth
                               borderStrokeColor:self.entityBorderColor
                               entityStrokeWidth:self.entityStrokeWidth
-                              entityStrokeColor:self.entityStrokeColor];
+                              entityStrokeColor:self.entityStrokeColor
+                              entityId: entityId];
     
     [self.motionEntities addObject:entity];
     [self onShapeSelectionChanged:entity];
     [self selectEntity:entity];
 }
 
-- (void)addTextEntity:(NSString *)fontType withFontSize: (NSNumber *)fontSize withText: (NSString *)text {
+- (void)addTextEntity:(NSString *)entityId fontType:(NSString *)fontType withFontSize: (NSNumber *)fontSize withText: (NSString *)text {
     CGFloat centerX = CGRectGetMidX(self.bounds);
     CGFloat centerY = CGRectGetMidY(self.bounds);
     
@@ -738,7 +742,8 @@
                            borderStrokeWidth:self.entityBorderStrokeWidth
                            borderStrokeColor:self.entityBorderColor
                            entityStrokeWidth:self.entityStrokeWidth
-                           entityStrokeColor:self.entityStrokeColor];
+                           entityStrokeColor:self.entityStrokeColor
+                           entityId: entityId];
     
     [self.motionEntities addObject:entity];
     [self onShapeSelectionChanged:entity];
@@ -783,6 +788,23 @@
     MotionEntity *entityToRemove = nil;
     for (MotionEntity *entity in self.motionEntities) {
         if ([entity isSelected]) {
+            entityToRemove = entity;
+            break;
+        }
+    }
+    if (entityToRemove) {
+        [self.motionEntities removeObject:entityToRemove];
+        [entityToRemove removeFromSuperview];
+        entityToRemove = nil;
+        [self selectEntity:entityToRemove];
+        [self onShapeSelectionChanged:nil];
+    }
+}
+
+- (void)deleteEntityById: (NSString *)entityId {
+    MotionEntity *entityToRemove = nil;
+    for (MotionEntity *entity in self.motionEntities) {
+        if ([entity entityHasId:entityId]) {
             entityToRemove = entity;
             break;
         }

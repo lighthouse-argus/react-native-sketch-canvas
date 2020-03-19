@@ -22,6 +22,9 @@ const RNImageEditor = requireNativeComponent("RNImageEditor", ImageEditor, {
 });
 const ImageEditorManager = NativeModules.RNImageEditorManager || {};
 
+const PATH = 'path';
+const SHAPE = 'shape';
+
 class ImageEditor extends React.Component {
     static propTypes = {
         style: ViewPropTypes.style,
@@ -107,6 +110,8 @@ class ImageEditor extends React.Component {
         super(props);
         this._pathsToProcess = [];
         this._paths = [];
+        this._shapes = [];
+        this._history = [];
         this._path = null;
         this._handle = null;
         this._screenScale = Platform.OS === "ios" ? 1 : PixelRatio.get();
@@ -151,18 +156,41 @@ class ImageEditor extends React.Component {
             UIManager.getViewManagerConfig(RNImageEditor).Commands.clear,
             []
         );
+        this._shapes.forEach(shape => {
+            this.deleteShapeById(shape.id);
+        });
+        this._shapes = [];
+    }
+
+    lastAdded() {
+        if (this._history.length > 0) {
+            return this._history.pop();
+        } else {
+            return null;
+        }
     }
 
     undo() {
-        let lastId = -1;
-        this._paths.forEach((d) => (lastId = d.drawer === this.props.user ? d.path.id : lastId));
-        if (lastId >= 0) this.deletePath(lastId);
-        return lastId;
+        let _lastAdded = this.lastAdded();
+        if (_lastAdded && _lastAdded.type == PATH) {
+            let data = this._paths.find(x => x.path.id == _lastAdded.id);
+            if (data && data.path && data.path.id) {
+                this.deletePath(data.path.id);
+            }
+        } else if (_lastAdded && _lastAdded.type == SHAPE) {
+            let shape = this._shapes.find(x => x.id == _lastAdded.id);
+            if (shape && shape.id) {
+                this.deleteShapeById(shape.id);
+            }
+        }
     }
 
     addPath(data) {
         if (this._initialized) {
-            if (this._paths.filter((p) => p.path.id === data.path.id).length === 0) this._paths.push(data);
+            if (this._paths.filter((p) => p.path.id === data.path.id).length === 0) {
+                this._paths.push(data);
+                this._history.push({ type: PATH, id: data.path.id });
+            }
             const pathData = data.path.data.map((p) => {
                 const coor = p.split(",").map((pp) => parseFloat(pp).toFixed(2));
                 return `${(coor[0] * this._screenScale * this._size.width) / data.size.width},${(coor[1] *
@@ -192,13 +220,25 @@ class ImageEditor extends React.Component {
 
     addShape(config) {
         if (config) {
+            let id =  Math.random().toString(36).substr(2, 9);
+            this._shapes.push({ id, ...config });
+            this._history.push({ type: SHAPE, id: id });
             let fontSize = config.textShapeFontSize ? config.textShapeFontSize : 0;
             UIManager.dispatchViewManagerCommand(
                 this._handle,
                 UIManager.getViewManagerConfig(RNImageEditor).Commands.addShape,
-                [config.shapeType, config.textShapeFontType, fontSize, config.textShapeText, config.imageShapeAsset]
+                [id, config.shapeType, config.textShapeFontType, fontSize, config.textShapeText, config.imageShapeAsset]
             );
         }
+    }
+
+    deleteShapeById(shapeId) {
+        this._shapes = this._shapes.filter((p) => p.id !== shapeId);
+        UIManager.dispatchViewManagerCommand(
+            this._handle,
+            UIManager.getViewManagerConfig(RNImageEditor).Commands.deleteShapeById,
+            [shapeId]
+        );
     }
 
     deleteSelectedShape() {
@@ -343,6 +383,7 @@ class ImageEditor extends React.Component {
                 if (this._path) {
                     this.props.onStrokeEnd({ path: this._path, size: this._size, drawer: this.props.user });
                     this._paths.push({ path: this._path, size: this._size, drawer: this.props.user });
+                    this._history.push({ type: PATH, id: this._path.id})
                 }
                 UIManager.dispatchViewManagerCommand(
                     this._handle,

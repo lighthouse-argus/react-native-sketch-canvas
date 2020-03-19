@@ -23,15 +23,16 @@ public class RectEntity extends MotionEntity {
     private Bitmap mRectBitmap;
     private Canvas mRectCanvas;
 
-    public RectEntity(@NonNull Layer layer,
+    public RectEntity(String entityId,
+                        @NonNull Layer layer,
                         @IntRange(from = 1) int canvasWidth,
-                        @IntRange(from = 1) int canvasHeight, 
-                        @IntRange(from = 1) int rectWidth, 
-                        @IntRange(from = 1) int rectHeight, 
-                        @Nullable Float bordersPadding, 
-                        @Nullable Float strokeWidth, 
+                        @IntRange(from = 1) int canvasHeight,
+                        @IntRange(from = 1) int rectWidth,
+                        @IntRange(from = 1) int rectHeight,
+                        @Nullable Float bordersPadding,
+                        @Nullable Float strokeWidth,
                         @Nullable Integer strokeColor) {
-        super(layer, canvasWidth, canvasHeight);
+        super(entityId, layer, canvasWidth, canvasHeight);
 
         this.mRectWidth = rectWidth;
         this.mRectHeight = rectHeight;
