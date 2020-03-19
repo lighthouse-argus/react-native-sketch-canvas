@@ -24,7 +24,8 @@ public class ArrowEntity extends MotionEntity {
     private Bitmap mArrowBitmap;
     private Canvas mArrowCanvas;
 
-    public ArrowEntity(@NonNull Layer layer,
+    public ArrowEntity(String entityId, 
+                        @NonNull Layer layer,
                         @IntRange(from = 1) int canvasWidth,
                         @IntRange(from = 1) int canvasHeight, 
                         @IntRange(from = 1) int width,
@@ -32,7 +33,7 @@ public class ArrowEntity extends MotionEntity {
                         @Nullable Float bordersPadding, 
                         @Nullable Float strokeWidth, 
                         @Nullable Integer strokeColor) {
-        super(layer, canvasWidth, canvasHeight);
+        super(entityId, layer, canvasWidth, canvasHeight);
 
         this.mWidth = width;
         this.mHeight = height;

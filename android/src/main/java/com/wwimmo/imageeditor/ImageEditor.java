@@ -594,42 +594,42 @@ public class ImageEditor extends View {
      * MotionEntities related code
      *
      **/
-    public void addEntity(EntityType shapeType, String textShapeFontType, int textShapeFontSize, String textShapeText, String imageShapeAsset) {
+    public void addEntity(String entityId, EntityType shapeType, String textShapeFontType, int textShapeFontSize, String textShapeText, String imageShapeAsset) {
         switch(shapeType) {
             case CIRCLE:
-                addCircleEntity();
+                addCircleEntity(entityId);
                 break;
             case TEXT:
-                addTextEntity(textShapeFontType, textShapeFontSize, textShapeText);
+                addTextEntity(entityId, textShapeFontType, textShapeFontSize, textShapeText);
                 break;
             case RECT:
-                addRectEntity(600, 300);
+                addRectEntity(entityId, 600, 300);
                 break;
             case SQUARE:
-                addSquareEntity(600);
+                addSquareEntity(entityId, 600);
                 break;
             case TRIANGLE:
-                addTriangleEntity();
+                addTriangleEntity(entityId);
                 break;
             case ARROW:
-                addArrowEntity();
+                addArrowEntity(entityId);
                 break;
             case IMAGE:
                 // TODO: Doesn't exist yet
                 break;
             default:
-                addCircleEntity();
+                addCircleEntity(entityId);
                 break;
         }
     }
     
-    protected void addCircleEntity() {
+    protected void addCircleEntity(String entityId) {
         Layer circleLayer = new Layer();
         CircleEntity circleEntity = null;
         if (mSketchCanvas.getWidth() < 100 || mSketchCanvas.getHeight() < 100) {
-            circleEntity = new CircleEntity(circleLayer, mDrawingCanvas.getWidth(), mDrawingCanvas.getHeight(), 300, 20f, mEntityStrokeWidth, mEntityStrokeColor);
+            circleEntity = new CircleEntity(entityId, circleLayer, mDrawingCanvas.getWidth(), mDrawingCanvas.getHeight(), 300, 20f, mEntityStrokeWidth, mEntityStrokeColor);
         } else {
-            circleEntity = new CircleEntity(circleLayer, mSketchCanvas.getWidth(), mSketchCanvas.getHeight(), 300, 20f, mEntityStrokeWidth, mEntityStrokeColor);
+            circleEntity = new CircleEntity(entityId, circleLayer, mSketchCanvas.getWidth(), mSketchCanvas.getHeight(), 300, 20f, mEntityStrokeWidth, mEntityStrokeColor);
         }
         addEntityAndPosition(circleEntity);
 
@@ -640,13 +640,13 @@ public class ImageEditor extends View {
         invalidateCanvas(true);
     }
 
-    protected void addTriangleEntity() {
+    protected void addTriangleEntity(String entityId) {
         Layer triangleLayer = new Layer();
         TriangleEntity triangleEntity = null;
         if (mSketchCanvas.getWidth() < 100 || mSketchCanvas.getHeight() < 100) {
-            triangleEntity = new TriangleEntity(triangleLayer, mDrawingCanvas.getWidth(), mDrawingCanvas.getHeight(), 600, 20f, mEntityStrokeWidth, mEntityStrokeColor);
+            triangleEntity = new TriangleEntity(entityId, triangleLayer, mDrawingCanvas.getWidth(), mDrawingCanvas.getHeight(), 600, 20f, mEntityStrokeWidth, mEntityStrokeColor);
         } else {
-            triangleEntity = new TriangleEntity(triangleLayer, mSketchCanvas.getWidth(), mSketchCanvas.getHeight(), 600, 20f, mEntityStrokeWidth, mEntityStrokeColor);
+            triangleEntity = new TriangleEntity(entityId, triangleLayer, mSketchCanvas.getWidth(), mSketchCanvas.getHeight(), 600, 20f, mEntityStrokeWidth, mEntityStrokeColor);
         }
         addEntityAndPosition(triangleEntity);
 
@@ -657,13 +657,13 @@ public class ImageEditor extends View {
         invalidateCanvas(true);
     }
 
-    protected void addArrowEntity() {
+    protected void addArrowEntity(String entityId) {
         Layer arrowLayer = new Layer();
         ArrowEntity arrowEntity = null;
         if (mSketchCanvas.getWidth() < 100 || mSketchCanvas.getHeight() < 100) {
-            arrowEntity = new ArrowEntity(arrowLayer, mDrawingCanvas.getWidth(), mDrawingCanvas.getHeight(), 600, 600, 20f, mEntityStrokeWidth, mEntityStrokeColor);
+            arrowEntity = new ArrowEntity(entityId, arrowLayer, mDrawingCanvas.getWidth(), mDrawingCanvas.getHeight(), 600, 600, 20f, mEntityStrokeWidth, mEntityStrokeColor);
         } else {
-            arrowEntity = new ArrowEntity(arrowLayer, mSketchCanvas.getWidth(), mSketchCanvas.getHeight(), 600, 600, 20f, mEntityStrokeWidth, mEntityStrokeColor);
+            arrowEntity = new ArrowEntity(entityId, arrowLayer, mSketchCanvas.getWidth(), mSketchCanvas.getHeight(), 600, 600, 20f, mEntityStrokeWidth, mEntityStrokeColor);
         }
         addEntityAndPosition(arrowEntity);
 
@@ -674,17 +674,17 @@ public class ImageEditor extends View {
         invalidateCanvas(true);
     }
 
-    protected void addSquareEntity(int width) {
-        addRectEntity(width, width);
+    protected void addSquareEntity(String entityId, int width) {
+        addRectEntity(entityId, width, width);
     }
 
-    protected void addRectEntity(int width, int height) {
+    protected void addRectEntity(String entityId, int width, int height) {
         Layer rectLayer = new Layer();
         RectEntity rectEntity = null;
         if (mSketchCanvas.getWidth() < 100 || mSketchCanvas.getHeight() < 100) {
-            rectEntity = new RectEntity(rectLayer, mDrawingCanvas.getWidth(), mDrawingCanvas.getHeight(), width, height, 30f, mEntityStrokeWidth, mEntityStrokeColor);
+            rectEntity = new RectEntity(entityId, rectLayer, mDrawingCanvas.getWidth(), mDrawingCanvas.getHeight(), width, height, 30f, mEntityStrokeWidth, mEntityStrokeColor);
         } else {
-            rectEntity = new RectEntity(rectLayer, mSketchCanvas.getWidth(), mSketchCanvas.getHeight(), width, height, 30f, mEntityStrokeWidth, mEntityStrokeColor);
+            rectEntity = new RectEntity(entityId, rectLayer, mSketchCanvas.getWidth(), mSketchCanvas.getHeight(), width, height, 30f, mEntityStrokeWidth, mEntityStrokeColor);
         }
         addEntityAndPosition(rectEntity);
 
@@ -695,7 +695,7 @@ public class ImageEditor extends View {
         invalidateCanvas(true);
     }
 
-    protected void addTextEntity(String fontType, int fontSize, String text) {
+    protected void addTextEntity(String entityId, String fontType, int fontSize, String text) {
         TextLayer textLayer = createTextLayer(fontType, fontSize);
         if (text != null) {
             textLayer.setText(text);
@@ -705,9 +705,9 @@ public class ImageEditor extends View {
 
         TextEntity textEntity = null;
         if (mSketchCanvas.getWidth() < 100 || mSketchCanvas.getHeight() < 100) {
-            textEntity = new TextEntity(textLayer, mDrawingCanvas.getWidth(), mDrawingCanvas.getHeight());
+            textEntity = new TextEntity(entityId, textLayer, mDrawingCanvas.getWidth(), mDrawingCanvas.getHeight());
         } else {
-            textEntity = new TextEntity(textLayer, mSketchCanvas.getWidth(), mSketchCanvas.getHeight());
+            textEntity = new TextEntity(entityId, textLayer, mSketchCanvas.getWidth(), mSketchCanvas.getHeight());
         }
         addEntityAndPosition(textEntity);
 
@@ -839,6 +839,26 @@ public class ImageEditor extends View {
         MotionEntity toRemoveEntity = null;
         for (MotionEntity entity : mEntities) {
             if (entity.isSelected()) {
+                toRemoveEntity = entity;
+                break;
+            }
+        }
+        if (toRemoveEntity != null) {
+            toRemoveEntity.setIsSelected(false);
+            if (mEntities.remove(toRemoveEntity)) {
+                toRemoveEntity.release();
+                toRemoveEntity = null;
+                mSelectedEntity = toRemoveEntity;
+                onShapeSelectionChanged(toRemoveEntity);
+                invalidateCanvas(true);
+            }
+        }
+    }
+
+    public void deleteShapeById(String entityId) {
+        MotionEntity toRemoveEntity = null;
+        for (MotionEntity entity : mEntities) {
+            if (entity.hasId(entityId)) {
                 toRemoveEntity = entity;
                 break;
             }
