@@ -74,15 +74,11 @@
     // CGContextStrokeRect(contextRef, entityRect);
 
     // CGContextRef context = UIGraphicsGetCurrentContext();
-
-    CGPoint point = CGPointMake(0, 50);
+    
     CGFloat radius = 20.0;
+    CGPoint point = CGPointMake(radius, radius);
     CGFloat lineLength = 45.0;
 
-    CGContextMoveToPoint(contextRef, point.x, point.y);
-    point.x += lineLength;
-    CGContextAddLineToPoint(contextRef, point.x, point.y);
-    point.x += radius;
     CGContextAddArc(contextRef, point.x, point.y, radius, M_PI, M_PI * 2.0, NO);
     point.x += radius * 2.0;
     CGContextAddArc(contextRef, point.x, point.y, radius, M_PI, M_PI * 2.0, NO);
@@ -92,6 +88,9 @@
     CGContextAddArc(contextRef, point.x, point.y, radius, M_PI, M_PI * 2.0, NO);
     point.x += lineLength + radius;
     CGContextAddLineToPoint(contextRef, point.x, point.y);
+
+    CGContextSetStrokeColorWithColor(contextRef, [[UIColor blackColor] CGColor]);
+    CGContextSetLineWidth(contextRef, 2.0);
 
     CGContextDrawPath(contextRef, kCGPathStroke);
 }
