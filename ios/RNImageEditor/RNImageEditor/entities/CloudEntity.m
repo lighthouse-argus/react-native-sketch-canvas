@@ -1,4 +1,4 @@
-//
+//;''
 //  CloudEntity.m
 //  RNImageEditor
 //
@@ -59,12 +59,11 @@
     CGContextSetLineWidth(contextRef, self.entityStrokeWidth / self.scale);
     CGContextSetStrokeColorWithColor(contextRef, [self.entityStrokeColor CGColor]);
     
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    CGContextSetRGBFillColor(context, 1.0f, 1.0f, 1.0f, 1.0f);
     CGRect entityRect = CGRectMake(0, 0, rect.size.width, rect.size.height);
-    CGContextFillRect(context, rect);
     CGFloat padding = (self.bordersPadding + self.entityStrokeWidth) / self.scale;
     entityRect = CGRectInset(entityRect, padding , padding);
+    [[UIColor blueColor] setFill];
+    UIRectFill(entityRect);
     
     CGContextStrokeRect(contextRef, entityRect);
 }
