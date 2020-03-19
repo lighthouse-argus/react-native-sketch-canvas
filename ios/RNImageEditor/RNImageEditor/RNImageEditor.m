@@ -13,6 +13,7 @@
 #import "entities/TriangleEntity.h"
 #import "entities/ArrowEntity.h"
 #import "entities/TextEntity.h"
+#import "entities/CloudEntity.h"
 
 @implementation RNImageEditor
 {
@@ -597,7 +598,7 @@
 
 - (void)addEntityWithId:(NSString *)entityId entityType:(NSString *)entityType textShapeFontType:(NSString *)textShapeFontType textShapeFontSize:(NSNumber *)textShapeFontSize textShapeText:(NSString *)textShapeText imageShapeAsset:(NSString *)imageShapeAsset {
     
-    switch ([@[@"Circle", @"Rect", @"Square", @"Triangle", @"Arrow", @"Text", @"Image"] indexOfObject: entityType]) {
+    switch ([@[@"Circle", @"Rect", @"Square", @"Triangle", @"Arrow", @"Text", @"Image", @"Cloud"] indexOfObject: entityType]) {
         case 1:
             [self addRectEntity:entityId width:300 andHeight:150];
             break;
@@ -615,6 +616,9 @@
             break;
         case 6:
             // TODO: ImageEntity Doesn't exist yet
+        case 7: 
+            [self addCloudEntity:entityId width:300 andHeight:300];
+            break;
         case 0:
         case NSNotFound:
         default: {
@@ -654,6 +658,31 @@
     CGFloat centerY = CGRectGetMidY(self.bounds);
     
     RectEntity *entity = [[RectEntity alloc]
+                          initAndSetupWithParent:self.bounds.size.width
+                          parentHeight:self.bounds.size.height
+                          parentCenterX:centerX
+                          parentCenterY:centerY
+                          parentScreenScale:self.window.screen.scale
+                          width:width
+                          height:height
+                          bordersPadding:5.0f
+                          borderStyle:self.entityBorderStyle
+                          borderStrokeWidth:self.entityBorderStrokeWidth
+                          borderStrokeColor:self.entityBorderColor
+                          entityStrokeWidth:self.entityStrokeWidth
+                          entityStrokeColor:self.entityStrokeColor
+                          entityId: entityId];
+    
+    [self.motionEntities addObject:entity];
+    [self onShapeSelectionChanged:entity];
+    [self selectEntity:entity];
+}
+
+- (void)addCloudEntity:(NSString *)entityId width:(NSInteger)width andHeight: (NSInteger)height {
+    CGFloat centerX = CGRectGetMidX(self.bounds);
+    CGFloat centerY = CGRectGetMidY(self.bounds);
+    
+    CloudEntity *entity = [[RectEntity alloc]
                           initAndSetupWithParent:self.bounds.size.width
                           parentHeight:self.bounds.size.height
                           parentCenterX:centerX
