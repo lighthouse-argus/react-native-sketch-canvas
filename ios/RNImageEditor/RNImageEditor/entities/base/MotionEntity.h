@@ -19,6 +19,8 @@
 @property (nonatomic) BOOL isSelected;
 @property (nonatomic) CGPoint centerPoint;
 @property (nonatomic) CGFloat scale;
+@property (nonatomic) CGFloat scaleX;
+@property (nonatomic) CGFloat scaleY;
 @property (nonatomic) CGFloat MIN_SCALE;
 @property (nonatomic) CGFloat MAX_SCALE;
 @property (nonatomic) CGFloat parentScreenScale;
@@ -55,6 +57,7 @@
 - (void)rotateEntityBy:(CGFloat)rotationInRadians;
 - (void)moveEntityTo:(CGPoint)locationDiff;
 - (void)scaleEntityBy:(CGFloat)newScale;
+- (void)scaleEntityByX:(CGFloat)xScale y:(CGFloat)yScale;
 - (void)updateStrokeSettings: (enum BorderStyle)borderStyle
            borderStrokeWidth: (CGFloat)borderStrokeWidth
            borderStrokeColor: (UIColor *)borderStrokeColor

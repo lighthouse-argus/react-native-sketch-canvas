@@ -913,15 +913,64 @@
     }
 }
 
-- (void)handleScale:(UIPinchGestureRecognizer *)sender {
-    UIGestureRecognizerState state = [sender state];
-    if (state == UIGestureRecognizerStateBegan || state == UIGestureRecognizerStateChanged) {
-        if (self.selectedEntity) {
-            [self.selectedEntity scaleEntityBy:sender.scale];
-            [self setNeedsDisplayInRect:self.selectedEntity.bounds];
-        }
-        [sender setScale:1.0];
-    }
+// - (void)handleScale:(UIPinchGestureRecognizer *)sender {
+//     UIGestureRecognizerState state = [sender state];
+//     if (state == UIGestureRecognizerStateBegan || state == UIGestureRecognizerStateChanged) {
+//         if (self.selectedEntity) {
+//             [self.selectedEntity scaleEntityBy:sender.scale];
+//             [self setNeedsDisplayInRect:self.selectedEntity.bounds];
+//         }
+//         [sender setScale:1.0];
+//     }
+// }
+
+// Via https://stackoverflow.com/a/18048582/1297243
+-(void) handleScale:(UIPinchGestureRecognizer *)pinchRecognizer
+{
+    if ([pinchRecognizer state] == UIGestureRecognizerStateBegan || [pinchRecognizer state] == UIGestureRecognizerStateChanged) {
+
+        if ([pinchRecognizer numberOfTouches] > 1) {
+
+            UIView *theView = [pinchRecognizer view];
+
+            CGPoint locationOne = [pinchRecognizer locationOfTouch:0 inView:theView];
+            CGPoint locationTwo = [pinchRecognizer locationOfTouch:1 inView:theView];
+
+            double slope = 0;
+            if (locationOne.x == locationTwo.x) {
+                // perfect vertical line
+                // not likely, but to avoid dividing by 0 in the slope equation
+                slope = 1000.0;
+            } else if (locationOne.y == locationTwo.y) {
+                // perfect horz line
+                // not likely, but to avoid any problems in the slope equation
+                slope = 0.0;
+            } else {
+                slope = (locationTwo.y - locationOne.y)/(locationTwo.x - locationOne.x);
+            }
+            double abSlope = ABS(slope);
+
+            if (abSlope < 0.5) {
+                if (self.selectedEntity) {
+                    [self.selectedEntity scaleEntityByX:pinchRecognizer.scale y:1.0];
+                    [self setNeedsDisplayInRect:self.selectedEntity.bounds];
+                }
+                [pinchRecognizer setScale:1.0];
+            } else if (abSlope > 1.7) {
+                if (self.selectedEntity) {
+                    [self.selectedEntity scaleEntityByX:1.0 y:pinchRecognizer.scale];
+                    [self setNeedsDisplayInRect:self.selectedEntity.bounds];
+                }
+                [pinchRecognizer setScale:1.0];
+            } else {
+                if (self.selectedEntity) {
+                    [self.selectedEntity scaleEntityByX:pinchRecognizer.scale y:pinchRecognizer.scale];
+                    [self setNeedsDisplayInRect:self.selectedEntity.bounds];
+                }
+                [pinchRecognizer setScale:1.0];
+            }  // else for diagonal pinch
+        }  // if numberOfTouches
+    }  // StateBegan if
 }
 
 #pragma mark - Outgoing events
