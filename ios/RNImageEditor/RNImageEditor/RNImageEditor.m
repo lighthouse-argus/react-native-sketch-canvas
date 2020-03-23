@@ -913,19 +913,8 @@
     }
 }
 
-// - (void)handleScale:(UIPinchGestureRecognizer *)sender {
-//     UIGestureRecognizerState state = [sender state];
-//     if (state == UIGestureRecognizerStateBegan || state == UIGestureRecognizerStateChanged) {
-//         if (self.selectedEntity) {
-//             [self.selectedEntity scaleEntityBy:sender.scale];
-//             [self setNeedsDisplayInRect:self.selectedEntity.bounds];
-//         }
-//         [sender setScale:1.0];
-//     }
-// }
-
 // Via https://stackoverflow.com/a/18048582/1297243
--(void) handleScale:(UIPinchGestureRecognizer *)pinchRecognizer
+- (void) handleScale:(UIPinchGestureRecognizer *)pinchRecognizer
 {
     if ([pinchRecognizer state] == UIGestureRecognizerStateBegan || [pinchRecognizer state] == UIGestureRecognizerStateChanged) {
 

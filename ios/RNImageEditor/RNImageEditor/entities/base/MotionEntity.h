@@ -56,7 +56,6 @@
 - (void)setIsSelected:(BOOL)isSelected;
 - (void)rotateEntityBy:(CGFloat)rotationInRadians;
 - (void)moveEntityTo:(CGPoint)locationDiff;
-- (void)scaleEntityBy:(CGFloat)newScale;
 - (void)scaleEntityByX:(CGFloat)xScale y:(CGFloat)yScale;
 - (void)updateStrokeSettings: (enum BorderStyle)borderStyle
            borderStrokeWidth: (CGFloat)borderStrokeWidth
