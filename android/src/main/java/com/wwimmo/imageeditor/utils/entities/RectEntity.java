@@ -103,10 +103,10 @@ public class RectEntity extends MotionEntity {
         this.mRectPaint = new Paint();
         this.mRectPaint.setColor(this.mStrokeColor);
         if (getWidth() == getHeight()) {
-            this.mRectPaint.setStrokeWidth(this.mStrokeWidth / getLayer().getScale());
+            this.mRectPaint.setStrokeWidth(this.mStrokeWidth / ((getLayer().getScaleX() + getLayer().getScaleY()) / 2));
         } else {
             // If we draw a rect the strokeWidth was scaled higher than it should've been as width != height on a rect...
-            this.mRectPaint.setStrokeWidth((this.mStrokeWidth-2.5f) / getLayer().getScale());
+            this.mRectPaint.setStrokeWidth((this.mStrokeWidth-2.5f) / ((getLayer().getScaleX() + getLayer().getScaleY()) / 2));
         }
 
         // TODO: Rect Border gets pixelated because it's just done once (initially)!

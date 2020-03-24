@@ -116,7 +116,7 @@ public class TriangleEntity extends MotionEntity {
         
         this.mTrianglePaint = new Paint();
         this.mTrianglePaint.setColor(this.mStrokeColor);
-        this.mTrianglePaint.setStrokeWidth(this.mStrokeWidth / getLayer().getScale());
+        this.mTrianglePaint.setStrokeWidth(this.mStrokeWidth / ((getLayer().getScaleX() + getLayer().getScaleY()) / 2));
 
         // TODO: Triangle Border gets pixelated because it's just done once (initially)!
         this.mTrianglePaint.setAntiAlias(true);

@@ -33,6 +33,7 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.lang.Math;
 
 import com.wwimmo.imageeditor.utils.CanvasText;
 import com.wwimmo.imageeditor.utils.Utility;
@@ -971,7 +972,27 @@ public class ImageEditor extends View {
         public boolean onScale(ScaleGestureDetector detector) {
             if (mSelectedEntity != null) {
                 float scaleFactorDiff = detector.getScaleFactor();
-                mSelectedEntity.getLayer().postScale(scaleFactorDiff - 1.0F);
+                float scaleX = detector.getCurrentSpanX() - detector.getPreviousSpanX();
+                float scaleY = detector.getCurrentSpanY() - detector.getPreviousSpanY();
+
+                float slope = 0;
+                if (detector.getCurrentSpanX() ==  detector.getPreviousSpanX()) {
+                    slope = 1000;
+                } else if (detector.getCurrentSpanY() ==  detector.getPreviousSpanY()) {
+                    slope = 0;
+                } else {
+                    slope = scaleY / scaleX;
+                }
+                float abSlope = Math.abs(slope);
+
+                if (abSlope < 0.5) {
+                    mSelectedEntity.getLayer().postScale(scaleFactorDiff - 1.0F, 1.0F);
+                } else if (abSlope > 1.7) {
+                    mSelectedEntity.getLayer().postScale(1.0F, scaleFactorDiff - 1.0F);
+                } else {
+                    mSelectedEntity.getLayer().postScale(scaleFactorDiff - 1.0F, scaleFactorDiff - 1.0F);
+                }
+
                 invalidateCanvas(true);
                 return true;
             }
