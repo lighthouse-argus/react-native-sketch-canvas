@@ -513,19 +513,6 @@
 
 - (UIImage *)scaleImage:(UIImage *)image toSize:(CGSize)size contentMode: (NSString*)mode
 {
-    // CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    // CGContextRef context = CGBitmapContextCreate(NULL, size.width, size.height, 8, 0, colorSpace, kCGImageAlphaPremultipliedLast);
-    // CGContextClearRect(context, CGRectMake(0, 0, size.width, size.height));
-
-    // CGRect targetRect = [RNImageEditorUtility fillImageWithSize:originalImage.size toSize:size contentMode:mode];
-    // CGContextDrawImage(context, targetRect, originalImage.CGImage);
-    
-    // CGImageRef scaledImage = CGBitmapContextCreateImage(context);
-    // CGColorSpaceRelease(colorSpace);
-    // CGContextRelease(context);
-    
-    // UIImage *image = [UIImage imageWithCGImage:scaledImage];
-    // CGImageRelease(scaledImage);
     CGFloat scale = MAX(size.width/image.size.width, size.height/image.size.height);
     CGFloat width = image.size.width * scale;
     CGFloat height = image.size.height * scale;
