@@ -339,7 +339,7 @@ public class ImageEditor extends View {
         if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_90) {
             return 90;
         } else if(exifOrientation == ExifInterface.ORIENTATION_NORMAL) { 
-            return 90; 
+            return 0;
         } else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_180) {
             return 180;
         } else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_270) {
