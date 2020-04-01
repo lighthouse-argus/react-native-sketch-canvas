@@ -994,8 +994,13 @@ public class ImageEditor extends View {
                 float currentX = scaleGestureDetector.getFocusX();
                 float currentY = scaleGestureDetector.getFocusY();
 
-                float diff = span - lastSpan;
-                Log.e("DAN-SKETCH, diff", String.valueOf(diff));
+                // Ensure we don't accidentally scale what was meant to be a rotate
+                // Log.w("SKETCHCANVAS span", String.valueOf(span));
+                float diff = Math.abs(span - lastSpan);
+                if (diff < 35.0f) {
+                    return false;
+                }
+                // Log.w("SKETCHCANVAS diff", String.valueOf(diff));
 
                 float scaleFactorX = spanX / lastSpanX;
                 float scaleFactorY = spanY / lastSpanY;
@@ -1009,7 +1014,7 @@ public class ImageEditor extends View {
                     slope = Math.abs((currentY - lastY) / (currentX - lastX));
                 }
 
-                if (slope < 0.5f) {
+                if (slope < 0.35f) {
                     mSelectedEntity.getLayer().postScale(scaleFactorX, 1);
                 } else if (slope > 1.7f) {
                     mSelectedEntity.getLayer().postScale(1, scaleFactorY);
