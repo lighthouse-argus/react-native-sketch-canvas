@@ -11,6 +11,8 @@ public class Layer {
     private float mRotationInDegrees;
 
     private float mScale;
+    private float scaleX;
+    private float scaleY;
     
     /**
      * top left X coordinate, relative to parent canvas
@@ -43,6 +45,17 @@ public class Layer {
         float newVal = mScale + scaleDiff;
         if (newVal >= getMinScale() && newVal <= getMaxScale()) {
             mScale = newVal;
+        }
+    }
+
+    public void postScale(float scaleDiffX, float scaleDiffY) {
+        float newX = scaleX * scaleDiffX;
+        float newY = scaleY * scaleDiffY;
+        if (newX >= getMinScale() && newX <= getMaxScale()) {
+            scaleX = newX;
+        }
+        if (newY >= getMinScale() && newY <= getMaxScale()) {
+            scaleY = newY;
         }
     }
 
@@ -84,8 +97,18 @@ public class Layer {
         return mScale;
     }
 
+    public float getScaleX() {
+        return scaleX;
+    }
+
+    public float getScaleY() {
+        return scaleY;
+    }
+
     public void setScale(float scale) {
         this.mScale = scale;
+        this.scaleX = scale;
+        this.scaleY = scale;
     }
 
     public float getX() {

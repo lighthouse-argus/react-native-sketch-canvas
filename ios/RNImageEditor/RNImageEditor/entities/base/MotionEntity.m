@@ -35,6 +35,8 @@
         self.isSelected = false;
         self.centerPoint = CGPointMake(parentCenterX, parentCenterY);
         self.scale = 1.0;
+        self.scaleX = 1.0;
+        self.scaleY = 1.0;
         self.MIN_SCALE = 0.15f;
         self.MAX_SCALE = 4.5f;
         self.parentScreenScale = parentScreenScale;
@@ -81,6 +83,17 @@
         self.scale *= newScale;
         [self setTransform:CGAffineTransformScale(self.transform, newScale, newScale)];
         [self setContentScaleFactor:self.parentScreenScale * self.scale]; // Make it sharp :-)
+    }
+}
+
+- (void)scaleEntityByX:(CGFloat)xScale y:(CGFloat)yScale {
+    CGFloat xScaleAbs = self.scale * xScale;
+    CGFloat yScaleAbs = self.scale * yScale;
+    if (xScaleAbs >= self.MIN_SCALE && yScaleAbs >= self.MIN_SCALE && xScaleAbs <= self.MAX_SCALE && yScaleAbs <= self.MAX_SCALE) {
+        self.scaleX *= xScale;
+        self.scaleY *= yScale;
+        [self setTransform:CGAffineTransformScale(self.transform, xScale, yScale)];
+        [self setContentScaleFactor:self.parentScreenScale * ((self.scaleX + self.scaleY) / 2)]; // Make it sharp :-)
     }
 }
 

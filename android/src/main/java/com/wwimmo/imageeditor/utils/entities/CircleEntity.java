@@ -95,7 +95,7 @@ public class CircleEntity extends MotionEntity {
         
         this.mCirclePaint = new Paint();
         this.mCirclePaint.setColor(this.mStrokeColor);
-        this.mCirclePaint.setStrokeWidth(this.mStrokeWidth / getLayer().getScale());
+        this.mCirclePaint.setStrokeWidth(this.mStrokeWidth / ((getLayer().getScaleX() + getLayer().getScaleY()) / 2));
 
         // TODO: Circle Border gets pixelated because it's just done once (initially)!
         this.mCirclePaint.setAntiAlias(true);

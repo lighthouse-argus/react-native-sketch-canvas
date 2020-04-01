@@ -33,6 +33,7 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.lang.Math;
 
 import com.wwimmo.imageeditor.utils.CanvasText;
 import com.wwimmo.imageeditor.utils.Utility;
@@ -967,12 +968,67 @@ public class ImageEditor extends View {
     }
 
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
+        private PointF viewportFocus = new PointF();
+        private float lastSpanX;
+        private float lastSpanY;
+        private float lastSpan;
+        private float lastX;
+        private float lastY;
+
         @Override
-        public boolean onScale(ScaleGestureDetector detector) {
+        public boolean onScaleBegin(ScaleGestureDetector scaleGestureDetector) {
+            lastSpanX = scaleGestureDetector.getCurrentSpanX();
+            lastSpanY = scaleGestureDetector.getCurrentSpanY();
+            lastSpan = scaleGestureDetector.getCurrentSpan();
+            lastX = scaleGestureDetector.getFocusX();
+            lastY = scaleGestureDetector.getFocusY();
+            return true;
+        }
+
+        @Override
+        public boolean onScale(ScaleGestureDetector scaleGestureDetector) {
             if (mSelectedEntity != null) {
-                float scaleFactorDiff = detector.getScaleFactor();
-                mSelectedEntity.getLayer().postScale(scaleFactorDiff - 1.0F);
+                float spanX = scaleGestureDetector.getCurrentSpanX();
+                float spanY = scaleGestureDetector.getCurrentSpanY();
+                float span = scaleGestureDetector.getCurrentSpan();
+                float currentX = scaleGestureDetector.getFocusX();
+                float currentY = scaleGestureDetector.getFocusY();
+
+                // Ensure we don't accidentally scale what was meant to be a rotate
+                // Log.w("SKETCHCANVAS span", String.valueOf(span));
+                float diff = Math.abs(span - lastSpan);
+                if (diff < 35.0f) {
+                    return false;
+                }
+                // Log.w("SKETCHCANVAS diff", String.valueOf(diff));
+
+                float scaleFactorX = spanX / lastSpanX;
+                float scaleFactorY = spanY / lastSpanY;
+
+                float slope = 0;
+                if (currentX == lastX) {
+                    slope = 1000;
+                } else if (currentY == lastY) {
+                    slope = 0;
+                } else {
+                    slope = Math.abs((currentY - lastY) / (currentX - lastX));
+                }
+
+                if (slope < 0.35f) {
+                    mSelectedEntity.getLayer().postScale(scaleFactorX, 1);
+                } else if (slope > 1.7f) {
+                    mSelectedEntity.getLayer().postScale(1, scaleFactorY);
+                } else {
+                    mSelectedEntity.getLayer().postScale(scaleFactorX, scaleFactorX);
+                }
+
                 invalidateCanvas(true);
+                lastSpanX = spanX;
+                lastSpanY = spanY;
+                lastSpan = span;
+                // not sure about this...
+                // lastX = currentX;
+                // lastY = currentY;
                 return true;
             }
             return false;

@@ -124,13 +124,13 @@ public abstract class MotionEntity {
 
         // calculate params
         float rotationInDegree = layer.getRotationInDegrees();
-        float scaleX = layer.getScale();
-        float scaleY = layer.getScale();
-        if (layer.isFlipped()) {
-            // flip (by X-coordinate) if needed
-            rotationInDegree *= -1.0F;
-            scaleX *= -1.0F;
-        }
+        float scaleX = layer.getScaleX();
+        float scaleY = layer.getScaleY();
+        // if (layer.isFlipped()) {
+        //     // flip (by X-coordinate) if needed
+        //     rotationInDegree *= -1.0F;
+        //     scaleX *= -1.0F;
+        // }
 
         // applying transformations : L = S * R * T
 

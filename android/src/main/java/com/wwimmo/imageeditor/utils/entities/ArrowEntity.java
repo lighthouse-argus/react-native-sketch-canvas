@@ -131,7 +131,7 @@ public class ArrowEntity extends MotionEntity {
         
         this.mArrowPaint = new Paint();
         this.mArrowPaint.setColor(this.mStrokeColor);
-        this.mArrowPaint.setStrokeWidth(this.mStrokeWidth / getLayer().getScale());
+        this.mArrowPaint.setStrokeWidth(this.mStrokeWidth / ((getLayer().getScaleX() + getLayer().getScaleY()) / 2));
 
         // This is essential for the overlapping paths to not result in a weird artefact
         this.mArrowPaint.setStrokeJoin(Paint.Join.BEVEL);
