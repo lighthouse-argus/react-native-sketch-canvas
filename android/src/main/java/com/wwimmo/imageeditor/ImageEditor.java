@@ -971,11 +971,17 @@ public class ImageEditor extends View {
         private PointF viewportFocus = new PointF();
         private float lastSpanX;
         private float lastSpanY;
+        private float lastSpan;
+        private float lastX;
+        private float lastY;
 
         @Override
         public boolean onScaleBegin(ScaleGestureDetector scaleGestureDetector) {
             lastSpanX = scaleGestureDetector.getCurrentSpanX();
             lastSpanY = scaleGestureDetector.getCurrentSpanY();
+            lastSpan = scaleGestureDetector.getCurrentSpan();
+            lastX = scaleGestureDetector.getFocusX();
+            lastY = scaleGestureDetector.getFocusY();
             return true;
         }
 
@@ -984,55 +990,44 @@ public class ImageEditor extends View {
             if (mSelectedEntity != null) {
                 float spanX = scaleGestureDetector.getCurrentSpanX();
                 float spanY = scaleGestureDetector.getCurrentSpanY();
+                float span = scaleGestureDetector.getCurrentSpan();
+                float currentX = scaleGestureDetector.getFocusX();
+                float currentY = scaleGestureDetector.getFocusY();
+
+                float diff = span - lastSpan;
+                Log.e("DAN-SKETCH, diff", String.valueOf(diff));
 
                 float scaleFactorX = spanX / lastSpanX;
                 float scaleFactorY = spanY / lastSpanY;
 
-                mSelectedEntity.getLayer().postScale(scaleFactorX, scaleFactorY);
+                float slope = 0;
+                if (currentX == lastX) {
+                    slope = 1000;
+                } else if (currentY == lastY) {
+                    slope = 0;
+                } else {
+                    slope = Math.abs((currentY - lastY) / (currentX - lastX));
+                }
+
+                if (slope < 0.5f) {
+                    mSelectedEntity.getLayer().postScale(scaleFactorX, 1);
+                } else if (slope > 1.7f) {
+                    mSelectedEntity.getLayer().postScale(1, scaleFactorY);
+                } else {
+                    mSelectedEntity.getLayer().postScale(scaleFactorX, scaleFactorX);
+                }
 
                 invalidateCanvas(true);
                 lastSpanX = spanX;
                 lastSpanY = spanY;
+                lastSpan = span;
+                // not sure about this...
+                // lastX = currentX;
+                // lastY = currentY;
                 return true;
             }
             return false;
         }
-
-        // public boolean onScale(ScaleGestureDetector detector) {
-        //     if (mSelectedEntity != null && startDetector != null) {
-        //         float scaleFactorDiff = detector.getCurrentSpan() / startDetector.getCurrentSpan();
-        //         float scaleX = detector.getFocusX() - startDetector.getFocusX();
-        //         float scaleY = detector.getFocusY() - startDetector.getFocusY();
-
-        //         Log.e("DAN-SKETCH, sfd", String.valueOf(scaleFactorDiff));
-        //         Log.e("DAN-SKETCH, sx", String.valueOf(scaleX));
-        //         Log.e("DAN-SKETCH, sy", String.valueOf(scaleY));
-
-        //         float slope = 0;
-        //         if (detector.getFocusX() == startDetector.getFocusX()) {
-        //             slope = 1000;
-        //         } else if (detector.getFocusY() == startDetector.getFocusY()) {
-        //             slope = 0;
-        //         } else {
-        //             slope = (detector.getFocusY() - startDetector.getFocusY()) / (detector.getFocusX() - startDetector.getFocusX());
-        //         }
-
-        //         Log.e("DAN-SKETCH, m", String.valueOf(slope));
-        //         float abSlope = Math.abs(slope);
-
-        //         if (abSlope < 0.5) {
-        //             mSelectedEntity.getLayer().postScale(scaleFactorDiff - 1.0F, 1.0F);
-        //         } else if (abSlope > 1.7) {
-        //             mSelectedEntity.getLayer().postScale(1.0F, scaleFactorDiff - 1.0F);
-        //         } else {
-        //             mSelectedEntity.getLayer().postScale(scaleFactorDiff - 1.0F, scaleFactorDiff - 1.0F);
-        //         }
-
-        //         invalidateCanvas(true);
-        //         return true;
-        //     }
-        //     return false;
-        // }
     }
 
     private class RotateListener extends RotateGestureDetector.SimpleOnRotateGestureListener {
