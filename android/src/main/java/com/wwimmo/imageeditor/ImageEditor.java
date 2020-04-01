@@ -967,55 +967,72 @@ public class ImageEditor extends View {
         }
     }
 
-    private class ScaleListener implements ScaleGestureDetector.OnScaleGestureListener {
-        private ScaleGestureDetector startDetector = null;
+    private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
+        private PointF viewportFocus = new PointF();
+        private float lastSpanX;
+        private float lastSpanY;
 
-        public boolean onScaleBegin (ScaleGestureDetector detector) {
-            Log.e("DAN-SKETCH", "startDetector updated");
-            startDetector = detector;
+        @Override
+        public boolean onScaleBegin(ScaleGestureDetector scaleGestureDetector) {
+            lastSpanX = scaleGestureDetector.getCurrentSpanX();
+            lastSpanY = scaleGestureDetector.getCurrentSpanY();
             return true;
         }
 
-        public void onScaleEnd (ScaleGestureDetector detector) {
-            Log.e("DAN-SKETCH", "scale ended");
-            startDetector = null;
-        }
+        @Override
+        public boolean onScale(ScaleGestureDetector scaleGestureDetector) {
+            if (mSelectedEntity != null) {
+                float spanX = scaleGestureDetector.getCurrentSpanX();
+                float spanY = scaleGestureDetector.getCurrentSpanY();
 
-        public boolean onScale(ScaleGestureDetector detector) {
-            if (mSelectedEntity != null && startDetector != null) {
-                float scaleFactorDiff = detector.getCurrentSpan() / startDetector.getCurrentSpan();
-                float scaleX = detector.getFocusX() - startDetector.getFocusX();
-                float scaleY = detector.getFocusY() - startDetector.getFocusY();
+                float scaleFactorX = spanX / lastSpanX;
+                float scaleFactorY = spanY / lastSpanY;
 
-                Log.e("DAN-SKETCH, sfd", String.valueOf(scaleFactorDiff));
-                Log.e("DAN-SKETCH, sx", String.valueOf(scaleX));
-                Log.e("DAN-SKETCH, sy", String.valueOf(scaleY));
-
-                float slope = 0;
-                if (detector.getFocusX() == startDetector.getFocusX()) {
-                    slope = 1000;
-                } else if (detector.getFocusY() == startDetector.getFocusY()) {
-                    slope = 0;
-                } else {
-                    slope = (detector.getFocusY() - startDetector.getFocusY()) / (detector.getFocusX() - startDetector.getFocusX());
-                }
-
-                Log.e("DAN-SKETCH, m", String.valueOf(slope));
-                float abSlope = Math.abs(slope);
-
-                if (abSlope < 0.5) {
-                    mSelectedEntity.getLayer().postScale(scaleFactorDiff - 1.0F, 1.0F);
-                } else if (abSlope > 1.7) {
-                    mSelectedEntity.getLayer().postScale(1.0F, scaleFactorDiff - 1.0F);
-                } else {
-                    mSelectedEntity.getLayer().postScale(scaleFactorDiff - 1.0F, scaleFactorDiff - 1.0F);
-                }
+                mSelectedEntity.getLayer().postScale(scaleFactorX, scaleFactorY);
 
                 invalidateCanvas(true);
+                lastSpanX = spanX;
+                lastSpanY = spanY;
                 return true;
             }
             return false;
         }
+
+        // public boolean onScale(ScaleGestureDetector detector) {
+        //     if (mSelectedEntity != null && startDetector != null) {
+        //         float scaleFactorDiff = detector.getCurrentSpan() / startDetector.getCurrentSpan();
+        //         float scaleX = detector.getFocusX() - startDetector.getFocusX();
+        //         float scaleY = detector.getFocusY() - startDetector.getFocusY();
+
+        //         Log.e("DAN-SKETCH, sfd", String.valueOf(scaleFactorDiff));
+        //         Log.e("DAN-SKETCH, sx", String.valueOf(scaleX));
+        //         Log.e("DAN-SKETCH, sy", String.valueOf(scaleY));
+
+        //         float slope = 0;
+        //         if (detector.getFocusX() == startDetector.getFocusX()) {
+        //             slope = 1000;
+        //         } else if (detector.getFocusY() == startDetector.getFocusY()) {
+        //             slope = 0;
+        //         } else {
+        //             slope = (detector.getFocusY() - startDetector.getFocusY()) / (detector.getFocusX() - startDetector.getFocusX());
+        //         }
+
+        //         Log.e("DAN-SKETCH, m", String.valueOf(slope));
+        //         float abSlope = Math.abs(slope);
+
+        //         if (abSlope < 0.5) {
+        //             mSelectedEntity.getLayer().postScale(scaleFactorDiff - 1.0F, 1.0F);
+        //         } else if (abSlope > 1.7) {
+        //             mSelectedEntity.getLayer().postScale(1.0F, scaleFactorDiff - 1.0F);
+        //         } else {
+        //             mSelectedEntity.getLayer().postScale(scaleFactorDiff - 1.0F, scaleFactorDiff - 1.0F);
+        //         }
+
+        //         invalidateCanvas(true);
+        //         return true;
+        //     }
+        //     return false;
+        // }
     }
 
     private class RotateListener extends RotateGestureDetector.SimpleOnRotateGestureListener {
