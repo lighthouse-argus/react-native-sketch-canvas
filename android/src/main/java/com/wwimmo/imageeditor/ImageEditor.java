@@ -339,7 +339,7 @@ public class ImageEditor extends View {
     private int exifToDegrees(int exifOrientation) {
         if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_90) {
             return 90;
-        } else if(exifOrientation == ExifInterface.ORIENTATION_NORMAL) {
+        } else if(exifOrientation == ExifInterface.ORIENTATION_NORMAL) { 
             return 0;
         } else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_180) {
             return 180;
