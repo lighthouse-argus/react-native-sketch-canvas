@@ -339,8 +339,8 @@ public class ImageEditor extends View {
     private int exifToDegrees(int exifOrientation) {
         if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_90) {
             return 90;
-        } else if(exifOrientation == ExifInterface.ORIENTATION_NORMAL) { 
-            return 90; 
+        } else if(exifOrientation == ExifInterface.ORIENTATION_NORMAL) {
+            return 0;
         } else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_180) {
             return 180;
         } else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_270) {
@@ -967,22 +967,40 @@ public class ImageEditor extends View {
         }
     }
 
-    private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
-        @Override
+    private class ScaleListener implements ScaleGestureDetector.OnScaleGestureListener {
+        private ScaleGestureDetector startDetector = null;
+
+        public boolean onScaleBegin (ScaleGestureDetector detector) {
+            Log.e("DAN-SKETCH", "startDetector updated");
+            startDetector = detector;
+            return true;
+        }
+
+        public void onScaleEnd (ScaleGestureDetector detector) {
+            Log.e("DAN-SKETCH", "scale ended");
+            startDetector = null;
+        }
+
         public boolean onScale(ScaleGestureDetector detector) {
-            if (mSelectedEntity != null) {
-                float scaleFactorDiff = detector.getScaleFactor();
-                float scaleX = detector.getCurrentSpanX() - detector.getPreviousSpanX();
-                float scaleY = detector.getCurrentSpanY() - detector.getPreviousSpanY();
+            if (mSelectedEntity != null && startDetector != null) {
+                float scaleFactorDiff = detector.getCurrentSpan() / startDetector.getCurrentSpan();
+                float scaleX = detector.getFocusX() - startDetector.getFocusX();
+                float scaleY = detector.getFocusY() - startDetector.getFocusY();
+
+                Log.e("DAN-SKETCH, sfd", String.valueOf(scaleFactorDiff));
+                Log.e("DAN-SKETCH, sx", String.valueOf(scaleX));
+                Log.e("DAN-SKETCH, sy", String.valueOf(scaleY));
 
                 float slope = 0;
-                if (detector.getCurrentSpanX() ==  detector.getPreviousSpanX()) {
+                if (detector.getFocusX() == startDetector.getFocusX()) {
                     slope = 1000;
-                } else if (detector.getCurrentSpanY() ==  detector.getPreviousSpanY()) {
+                } else if (detector.getFocusY() == startDetector.getFocusY()) {
                     slope = 0;
                 } else {
-                    slope = scaleY / scaleX;
+                    slope = (detector.getFocusY() - startDetector.getFocusY()) / (detector.getFocusX() - startDetector.getFocusX());
                 }
+
+                Log.e("DAN-SKETCH, m", String.valueOf(slope));
                 float abSlope = Math.abs(slope);
 
                 if (abSlope < 0.5) {

@@ -49,10 +49,12 @@ public class Layer {
     }
 
     public void postScale(float scaleDiffX, float scaleDiffY) {
-        float newX = scaleX + scaleDiffX;
-        float newY = scaleY + scaleDiffY;
-        if (newX >= getMinScale() && newX <= getMaxScale() && newY >= getMinScale() && newY <= getMaxScale()) {
+        float newX = scaleX * scaleDiffX;
+        float newY = scaleY * scaleDiffY;
+        if (newX >= getMinScale() && newX <= getMaxScale()) {
             scaleX = newX;
+        }
+        if (newY >= getMinScale() && newY <= getMaxScale()) {
             scaleY = newY;
         }
     }
