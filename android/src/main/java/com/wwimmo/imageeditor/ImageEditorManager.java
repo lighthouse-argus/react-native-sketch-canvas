@@ -180,11 +180,14 @@ public class ImageEditorManager extends SimpleViewManager<ImageEditor> {
                     case "Image":
                         shapeType = EntityType.IMAGE;
                         break;
+                    case "Cloud":
+                        shapeType = EntityType.CLOUD;
+                        break;
                     default:
                         shapeType = EntityType.CIRCLE;
                         break;
                 }
-                
+
                 String typeFace = args.isNull(2) ? null : args.getString(2);
                 int fontSize = args.getInt(3);
                 String text = args.isNull(4) ? null : args.getString(4);

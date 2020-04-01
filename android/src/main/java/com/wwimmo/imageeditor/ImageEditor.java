@@ -45,6 +45,7 @@ import com.wwimmo.imageeditor.utils.entities.BorderStyle;
 import com.wwimmo.imageeditor.utils.entities.EntityType;
 import com.wwimmo.imageeditor.utils.entities.CircleEntity;
 import com.wwimmo.imageeditor.utils.entities.RectEntity;
+import com.wwimmo.imageeditor.utils.entities.CloudEntity;
 import com.wwimmo.imageeditor.utils.entities.MotionEntity;
 import com.wwimmo.imageeditor.utils.entities.TriangleEntity;
 import com.wwimmo.imageeditor.utils.entities.TextEntity;
@@ -618,6 +619,9 @@ public class ImageEditor extends View {
             case IMAGE:
                 // TODO: Doesn't exist yet
                 break;
+            case CLOUD:
+                addCloudEntity(entityId, 600, 300);
+                break;
             default:
                 addCircleEntity(entityId);
                 break;
@@ -692,6 +696,23 @@ public class ImageEditor extends View {
         PointF center = rectEntity.absoluteCenter();
         center.y = center.y * 0.5F;
         rectEntity.moveCenterTo(center);
+
+        invalidateCanvas(true);
+    }
+
+    protected void addCloudEntity(String entityId, int width, int height) {
+        Layer rectLayer = new Layer();
+        CloudEntity cloudEntity = null;
+        if (mSketchCanvas.getWidth() < 100 || mSketchCanvas.getHeight() < 100) {
+            cloudEntity = new CloudEntity(mContext, entityId, rectLayer, mDrawingCanvas.getWidth(), mDrawingCanvas.getHeight(), width, height, 30f, mEntityStrokeWidth, mEntityStrokeColor);
+        } else {
+            cloudEntity = new CloudEntity(mContext, entityId, rectLayer, mSketchCanvas.getWidth(), mSketchCanvas.getHeight(), width, height, 30f, mEntityStrokeWidth, mEntityStrokeColor);
+        }
+        addEntityAndPosition(cloudEntity);
+
+        PointF center = cloudEntity.absoluteCenter();
+        center.y = center.y * 0.5F;
+        cloudEntity.moveCenterTo(center);
 
         invalidateCanvas(true);
     }
