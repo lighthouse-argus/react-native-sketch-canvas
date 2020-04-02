@@ -3,17 +3,21 @@ package com.wwimmo.imageeditor.utils.entities;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.VectorDrawable;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.PorterDuff;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 
 import com.facebook.react.uimanager.ThemedReactContext;
 
 import com.wwimmo.imageeditor.utils.layers.Layer;
 import com.wwimmo.imageeditor.utils.Utility;
+import com.wwimmo.imageeditor.R;
 
 public class CloudEntity extends MotionEntity {
     private int mRectWidth;
@@ -92,13 +96,17 @@ public class CloudEntity extends MotionEntity {
     private void configureRectBitmap(@Nullable Paint paint) {
         updatePaint(paint);
         if (this.mRectBitmap == null) {
-            // this.mRectBitmap = Utility.getBitmap(this.mContext, R.drawable.cloud);
             this.mRectBitmap = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
             this.mRectCanvas = new Canvas(this.mRectBitmap);
         }
         this.mRectCanvas.save();
         this.mRectCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-        this.mRectCanvas.drawRect(this.mBordersPadding, this.mBordersPadding, getWidth() - this.mBordersPadding, getHeight() - this.mBordersPadding, this.mRectPaint);
+        VectorDrawable drawable = (VectorDrawable) ContextCompat.getDrawable(this.mContext, R.drawable.ic_cloud);
+        drawable.setBounds(0, 0, getWidth(), getHeight());
+        drawable.draw(mRectCanvas);
+        // Bitmap cloud = Utility.getBitmap(this.mContext, R.drawable.ic_cloud);
+        // this.mRectCanvas.drawBitmap(cloud, 0, 0, this.mRectPaint);
+        // this.mRectCanvas.drawRect(this.mBordersPadding, this.mBordersPadding, getWidth() - this.mBordersPadding, getHeight() - this.mBordersPadding, this.mRectPaint);
         this.mRectCanvas.restore();
     }
 

@@ -108,7 +108,9 @@ public final class Utility {
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private static Bitmap getBitmap(VectorDrawable vectorDrawable) {
+    public static Bitmap getBitmap(VectorDrawable vectorDrawable) {
+        Log.w("sketch: vector height", String.valueOf(vectorDrawable.getIntrinsicHeight()));
+        Log.w("sketch: vector width", String.valueOf(vectorDrawable.getIntrinsicWidth()));
         Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(),
                 vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
@@ -117,13 +119,17 @@ public final class Utility {
         return bitmap;
     }
 
-    private static Bitmap getBitmap(Context context, int drawableId) {
+    public static Bitmap getBitmap(Context context, int drawableId) {
         Drawable drawable = ContextCompat.getDrawable(context, drawableId);
+        Log.w("SKETCH: drawable", drawable.toString());
         if (drawable instanceof BitmapDrawable) {
+            Log.w("SKETCH: returning drawable", drawable.toString());
             return BitmapFactory.decodeResource(context.getResources(), drawableId);
         } else if (drawable instanceof VectorDrawable) {
+            Log.w("SKETCH: returning vector", "");
             return getBitmap((VectorDrawable) drawable);
         } else {
+            Log.w("SKETCH: oops", "not allowed buckaroo");
             throw new IllegalArgumentException("unsupported drawable type");
         }
     }
