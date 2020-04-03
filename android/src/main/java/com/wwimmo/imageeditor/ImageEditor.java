@@ -627,11 +627,7 @@ public class ImageEditor extends View {
     protected void addCircleEntity(String entityId) {
         Layer circleLayer = new Layer();
         CircleEntity circleEntity = null;
-        if (mSketchCanvas.getWidth() < 100 || mSketchCanvas.getHeight() < 100) {
-            circleEntity = new CircleEntity(entityId, circleLayer, mDrawingCanvas.getWidth(), mDrawingCanvas.getHeight(), 300, 20f, mEntityStrokeWidth, mEntityStrokeColor);
-        } else {
-            circleEntity = new CircleEntity(entityId, circleLayer, mSketchCanvas.getWidth(), mSketchCanvas.getHeight(), 300, 20f, mEntityStrokeWidth, mEntityStrokeColor);
-        }
+        circleEntity = new CircleEntity(entityId, circleLayer, mDrawingCanvas.getWidth(), mDrawingCanvas.getHeight(), 300, 20f, mEntityStrokeWidth, mEntityStrokeColor);
         addEntityAndPosition(circleEntity);
 
         PointF center = circleEntity.absoluteCenter();
@@ -644,11 +640,7 @@ public class ImageEditor extends View {
     protected void addTriangleEntity(String entityId) {
         Layer triangleLayer = new Layer();
         TriangleEntity triangleEntity = null;
-        if (mSketchCanvas.getWidth() < 100 || mSketchCanvas.getHeight() < 100) {
-            triangleEntity = new TriangleEntity(entityId, triangleLayer, mDrawingCanvas.getWidth(), mDrawingCanvas.getHeight(), 600, 20f, mEntityStrokeWidth, mEntityStrokeColor);
-        } else {
-            triangleEntity = new TriangleEntity(entityId, triangleLayer, mSketchCanvas.getWidth(), mSketchCanvas.getHeight(), 600, 20f, mEntityStrokeWidth, mEntityStrokeColor);
-        }
+        triangleEntity = new TriangleEntity(entityId, triangleLayer, mDrawingCanvas.getWidth(), mDrawingCanvas.getHeight(), 600, 20f, mEntityStrokeWidth, mEntityStrokeColor);
         addEntityAndPosition(triangleEntity);
 
         PointF center = triangleEntity.absoluteCenter();
@@ -661,11 +653,7 @@ public class ImageEditor extends View {
     protected void addArrowEntity(String entityId) {
         Layer arrowLayer = new Layer();
         ArrowEntity arrowEntity = null;
-        if (mSketchCanvas.getWidth() < 100 || mSketchCanvas.getHeight() < 100) {
-            arrowEntity = new ArrowEntity(entityId, arrowLayer, mDrawingCanvas.getWidth(), mDrawingCanvas.getHeight(), 600, 600, 20f, mEntityStrokeWidth, mEntityStrokeColor);
-        } else {
-            arrowEntity = new ArrowEntity(entityId, arrowLayer, mSketchCanvas.getWidth(), mSketchCanvas.getHeight(), 600, 600, 20f, mEntityStrokeWidth, mEntityStrokeColor);
-        }
+        arrowEntity = new ArrowEntity(entityId, arrowLayer, mDrawingCanvas.getWidth(), mDrawingCanvas.getHeight(), 600, 600, 20f, mEntityStrokeWidth, mEntityStrokeColor);
         addEntityAndPosition(arrowEntity);
 
         PointF center = arrowEntity.absoluteCenter();
@@ -682,11 +670,7 @@ public class ImageEditor extends View {
     protected void addRectEntity(String entityId, int width, int height) {
         Layer rectLayer = new Layer();
         RectEntity rectEntity = null;
-        if (mSketchCanvas.getWidth() < 100 || mSketchCanvas.getHeight() < 100) {
-            rectEntity = new RectEntity(entityId, rectLayer, mDrawingCanvas.getWidth(), mDrawingCanvas.getHeight(), width, height, 30f, mEntityStrokeWidth, mEntityStrokeColor);
-        } else {
-            rectEntity = new RectEntity(entityId, rectLayer, mSketchCanvas.getWidth(), mSketchCanvas.getHeight(), width, height, 30f, mEntityStrokeWidth, mEntityStrokeColor);
-        }
+        rectEntity = new RectEntity(entityId, rectLayer, mDrawingCanvas.getWidth(), mDrawingCanvas.getHeight(), width, height, 30f, mEntityStrokeWidth, mEntityStrokeColor);
         addEntityAndPosition(rectEntity);
 
         PointF center = rectEntity.absoluteCenter();
@@ -705,11 +689,7 @@ public class ImageEditor extends View {
         }
 
         TextEntity textEntity = null;
-        if (mSketchCanvas.getWidth() < 100 || mSketchCanvas.getHeight() < 100) {
-            textEntity = new TextEntity(entityId, textLayer, mDrawingCanvas.getWidth(), mDrawingCanvas.getHeight());
-        } else {
-            textEntity = new TextEntity(entityId, textLayer, mSketchCanvas.getWidth(), mSketchCanvas.getHeight());
-        }
+        textEntity = new TextEntity(entityId, textLayer, mDrawingCanvas.getWidth(), mDrawingCanvas.getHeight());
         addEntityAndPosition(textEntity);
 
         PointF center = textEntity.absoluteCenter();
@@ -988,47 +968,49 @@ public class ImageEditor extends View {
         @Override
         public boolean onScale(ScaleGestureDetector scaleGestureDetector) {
             if (mSelectedEntity != null) {
-                float spanX = scaleGestureDetector.getCurrentSpanX();
-                float spanY = scaleGestureDetector.getCurrentSpanY();
-                float span = scaleGestureDetector.getCurrentSpan();
-                float currentX = scaleGestureDetector.getFocusX();
-                float currentY = scaleGestureDetector.getFocusY();
+                float scaleFactorDiff = scaleGestureDetector.getScaleFactor();
+                mSelectedEntity.getLayer().postScale(scaleFactorDiff - 1.0F);
+                // float spanX = scaleGestureDetector.getCurrentSpanX();
+                // float spanY = scaleGestureDetector.getCurrentSpanY();
+                // float span = scaleGestureDetector.getCurrentSpan();
+                // float currentX = scaleGestureDetector.getFocusX();
+                // float currentY = scaleGestureDetector.getFocusY();
 
-                // Ensure we don't accidentally scale what was meant to be a rotate
-                // Log.w("SKETCHCANVAS span", String.valueOf(span));
-                float diff = Math.abs(span - lastSpan);
-                if (diff < 35.0f) {
-                    return false;
-                }
-                // Log.w("SKETCHCANVAS diff", String.valueOf(diff));
+                // // Ensure we don't accidentally scale what was meant to be a rotate
+                // // Log.w("SKETCHCANVAS span", String.valueOf(span));
+                // float diff = Math.abs(span - lastSpan);
+                // if (diff < 35.0f) {
+                //     return false;
+                // }
+                // // Log.w("SKETCHCANVAS diff", String.valueOf(diff));
 
-                float scaleFactorX = spanX / lastSpanX;
-                float scaleFactorY = spanY / lastSpanY;
+                // float scaleFactorX = spanX / lastSpanX;
+                // float scaleFactorY = spanY / lastSpanY;
 
-                float slope = 0;
-                if (currentX == lastX) {
-                    slope = 1000;
-                } else if (currentY == lastY) {
-                    slope = 0;
-                } else {
-                    slope = Math.abs((currentY - lastY) / (currentX - lastX));
-                }
+                // float slope = 0;
+                // if (currentX == lastX) {
+                //     slope = 1000;
+                // } else if (currentY == lastY) {
+                //     slope = 0;
+                // } else {
+                //     slope = Math.abs((currentY - lastY) / (currentX - lastX));
+                // }
 
-                if (slope < 0.35f) {
-                    mSelectedEntity.getLayer().postScale(scaleFactorX, 1);
-                } else if (slope > 1.7f) {
-                    mSelectedEntity.getLayer().postScale(1, scaleFactorY);
-                } else {
-                    mSelectedEntity.getLayer().postScale(scaleFactorX, scaleFactorX);
-                }
+                // if (slope < 0.35f) {
+                //     mSelectedEntity.getLayer().postScale(scaleFactorX, 1);
+                // } else if (slope > 1.7f) {
+                //     mSelectedEntity.getLayer().postScale(1, scaleFactorY);
+                // } else {
+                //     mSelectedEntity.getLayer().postScale(scaleFactorX, scaleFactorX);
+                // }
 
-                invalidateCanvas(true);
-                lastSpanX = spanX;
-                lastSpanY = spanY;
-                lastSpan = span;
+                // lastSpanX = spanX;
+                // lastSpanY = spanY;
+                // lastSpan = span;
                 // not sure about this...
                 // lastX = currentX;
                 // lastY = currentY;
+                invalidateCanvas(true);
                 return true;
             }
             return false;

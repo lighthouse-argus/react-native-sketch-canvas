@@ -98,11 +98,11 @@ public class Layer {
     }
 
     public float getScaleX() {
-        return scaleX;
+        return mScale;
     }
 
     public float getScaleY() {
-        return scaleY;
+        return mScale;
     }
 
     public void setScale(float scale) {
