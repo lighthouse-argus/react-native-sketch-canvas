@@ -101,12 +101,9 @@ public class CloudEntity extends MotionEntity {
         }
         this.mRectCanvas.save();
         this.mRectCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-        VectorDrawable drawable = (VectorDrawable) ContextCompat.getDrawable(this.mContext, R.drawable.ic_cloud);
+        Drawable drawable = ((Drawable) ContextCompat.getDrawable(this.mContext, R.drawable.ic_cloud)).mutate();
         drawable.setBounds(0, 0, getWidth(), getHeight());
         drawable.draw(mRectCanvas);
-        // Bitmap cloud = Utility.getBitmap(this.mContext, R.drawable.ic_cloud);
-        // this.mRectCanvas.drawBitmap(cloud, 0, 0, this.mRectPaint);
-        // this.mRectCanvas.drawRect(this.mBordersPadding, this.mBordersPadding, getWidth() - this.mBordersPadding, getHeight() - this.mBordersPadding, this.mRectPaint);
         this.mRectCanvas.restore();
     }
 

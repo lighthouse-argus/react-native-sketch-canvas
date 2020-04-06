@@ -687,11 +687,7 @@ public class ImageEditor extends View {
     protected void addCloudEntity(String entityId, int width, int height) {
         Layer rectLayer = new Layer();
         CloudEntity cloudEntity = null;
-        if (mSketchCanvas.getWidth() < 100 || mSketchCanvas.getHeight() < 100) {
-            cloudEntity = new CloudEntity(mContext, entityId, rectLayer, mDrawingCanvas.getWidth(), mDrawingCanvas.getHeight(), width, height, 30f, mEntityStrokeWidth, mEntityStrokeColor);
-        } else {
-            cloudEntity = new CloudEntity(mContext, entityId, rectLayer, mSketchCanvas.getWidth(), mSketchCanvas.getHeight(), width, height, 30f, mEntityStrokeWidth, mEntityStrokeColor);
-        }
+        cloudEntity = new CloudEntity(mContext, entityId, rectLayer, mDrawingCanvas.getWidth(), mDrawingCanvas.getHeight(), width, height, 30f, mEntityStrokeWidth, mEntityStrokeColor);
         addEntityAndPosition(cloudEntity);
 
         PointF center = cloudEntity.absoluteCenter();
