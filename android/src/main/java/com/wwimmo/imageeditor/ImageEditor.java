@@ -620,7 +620,7 @@ public class ImageEditor extends View {
                 // TODO: Doesn't exist yet
                 break;
             case CLOUD:
-                addCloudEntity(entityId, 600, 300);
+                addCloudEntity(entityId, 600, 600);
                 break;
             default:
                 addCircleEntity(entityId);
