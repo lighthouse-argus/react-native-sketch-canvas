@@ -76,17 +76,19 @@
     // CGContextStrokeRect(contextRef, entityRect);
 
     // CGContextRef context = UIGraphicsGetCurrentContext();
-    NSURL *url = [[NSBundle mainBundle] URLForResource:@"cloud" withExtension:@"svg"];
-    NSArray<SVGBezierPath*> *paths = [SVGBezierPath pathsFromSVGAtURL: url];
-    CALayer *layer = [CALayer layer];
-    layer.frame = CGRectMake(0, 0, rect.size.width, rect.size.height);
-    for (SVGBezierPath *path in paths) {
-        CAShapeLayer *shapeLayer = [CAShapeLayer layer];
-        shapeLayer.path = path.CGPath;
-        [layer addSublayer: shapeLayer];
+    NSURL *url = [[NSBundle bundleForClass:[self class]] URLForResource:@"cloud" withExtension:@"svg"];
+    if (url != nil) {
+        NSArray<SVGBezierPath*> *paths = [SVGBezierPath pathsFromSVGAtURL: url];
+        CALayer *layer = [CALayer layer];
+        layer.frame = CGRectMake(0, 0, rect.size.width, rect.size.height);
+        for (SVGBezierPath *path in paths) {
+            CAShapeLayer *shapeLayer = [CAShapeLayer layer];
+            shapeLayer.path = path.CGPath;
+            [layer addSublayer: shapeLayer];
+        }
+        [layer setNeedsDisplay];
+        [layer drawInContext:contextRef];
     }
-    [layer setNeedsDisplay];
-    [layer drawInContext:contextRef];
 
     CGContextDrawPath(contextRef, kCGPathStroke);
 }

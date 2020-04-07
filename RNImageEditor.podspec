@@ -12,6 +12,7 @@ Pod::Spec.new do |s|
   s.source       = { :git => package['repository']['url'] }
   s.platform     = :ios, '8.0'
   s.source_files = 'ios/**/*.{h,m}'
+  s.resources    = 'ios/RNImageEditor/Resources/*.svg'
   s.dependency   'React'
   s.dependency   'PocketSVG'
 end
