@@ -8,6 +8,7 @@
 #import <Foundation/Foundation.h>
 #import "base/MotionEntity.h"
 #import "CloudEntity.h"
+#import "PocketSVG/PocketSVG.h"
 
 @implementation CloudEntity
 {
@@ -75,47 +76,18 @@
     // CGContextStrokeRect(contextRef, entityRect);
 
     // CGContextRef context = UIGraphicsGetCurrentContext();
-    
-    CGFloat padding = (self.bordersPadding + self.entityStrokeWidth) / self.scale;
-    CGFloat radius = ((rect.size.width - padding) / 5) / 2;
-    CGPoint point = CGPointMake(radius + padding, radius + padding);
-//    CGFloat lineLength = 45.0;
-
-    for (int i = 0; i < 5; i++) {
-        CGContextAddArc(contextRef, point.x, point.y, radius, M_PI, M_PI * 2.0, NO);
-        point.x += radius * 2.0;
+    NSURL *url = [[NSBundle mainBundle] URLForResource:@"cloud" withExtension:@"svg"];
+    NSArray<SVGBezierPath*> *paths = [SVGBezierPath pathsFromSVGAtURL: url];
+    CALayer *layer = [CALayer layer];
+    layer.frame = CGRectMake(0, 0, rect.size.width, rect.size.height);
+    for (SVGBezierPath *path in paths) {
+        CAShapeLayer *shapeLayer = [CAShapeLayer layer];
+        shapeLayer.path = path.CGPath;
+        [layer addSublayer: shapeLayer];
     }
+    [layer setNeedsDisplay];
+    [layer drawInContext:contextRef];
 
-    point.x -= radius;
-    point.y += radius;
-
-    for (int i = 0; i < 5; i++) {
-        CGContextAddArc(contextRef, point.x, point.y, radius, M_PI / 2.0, (3.0 * M_PI) / 2.0, YES);
-        point.y += radius * 2.0;
-    }
-
-    point.x -= radius;
-    point.y -= radius;
-
-    for (int i = 0; i < 5; i++) {
-        CGContextAddArc(contextRef, point.x, point.y, radius, M_PI, M_PI * 2.0, YES);
-        point.x -= radius * 2.0;
-    }
-
-    point.x += radius;
-    point.y -= radius;
-
-
-    for (int i = 0; i < 5; i++) {
-        CGContextAddArc(contextRef, point.x, point.y, radius, M_PI / 2.0, (3.0 * M_PI) / 2.0, NO);
-        point.y -= radius * 2.0;
-    }
-    // for (int i = 0; i < 5; i++) {
-    //     CGContextAddArc(contextRef, point.x, point.y, radius, (3.0 * M_PI) / 2.0, (M_PI / 2.0), YES);
-    //     point.y -= radius * 2.0;
-    // }
-
-    CGContextAddLineToPoint(contextRef, point.x, point.y);
     CGContextDrawPath(contextRef, kCGPathStroke);
 }
 
