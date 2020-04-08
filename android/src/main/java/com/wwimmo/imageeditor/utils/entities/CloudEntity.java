@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.VectorDrawable;
+import android.graphics.drawable.ScaleDrawable;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.PorterDuff;
@@ -12,6 +13,7 @@ import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 
 import com.facebook.react.uimanager.ThemedReactContext;
 
@@ -101,10 +103,22 @@ public class CloudEntity extends MotionEntity {
         }
         this.mRectCanvas.save();
         this.mRectCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-        Drawable drawable = ((Drawable) ContextCompat.getDrawable(this.mContext, R.drawable.ic_cloud)).mutate();
+        Drawable drawable = (ContextCompat.getDrawable(this.mContext, this.getCloudForStroke())).mutate();
+        Drawable wrappedDrawable = DrawableCompat.wrap(drawable);
+        DrawableCompat.setTint(wrappedDrawable, this.mStrokeColor);
         drawable.setBounds(0, 0, getWidth(), getHeight());
         drawable.draw(mRectCanvas);
         this.mRectCanvas.restore();
+    }
+
+    private int getCloudForStroke() {
+        if (this.mStrokeWidth < 3) {
+            return R.drawable.ic_cloud;
+        } else if (this.mStrokeWidth >= 3 && this.mStrokeWidth < 7.5) {
+            return R.drawable.ic_cloud_regular;
+        } else {
+            return R.drawable.ic_cloud_thick;
+        }
     }
 
     private void updatePaint(@Nullable Paint paint) {
