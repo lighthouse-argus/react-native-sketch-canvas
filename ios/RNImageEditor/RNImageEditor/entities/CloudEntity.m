@@ -76,6 +76,7 @@
     // CGContextStrokeRect(contextRef, entityRect);
 
     // CGContextRef context = UIGraphicsGetCurrentContext();
+    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
     NSURL *url = [[NSBundle bundleForClass:[self class]] URLForResource:@"cloud" withExtension:@"svg"];
     if (url != nil) {
         NSArray<SVGBezierPath*> *paths = [SVGBezierPath pathsFromSVGAtURL: url];
