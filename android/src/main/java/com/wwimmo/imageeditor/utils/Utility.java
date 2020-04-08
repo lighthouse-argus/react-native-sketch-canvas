@@ -1,10 +1,24 @@
 package com.wwimmo.imageeditor.utils;
 
+import java.lang.IllegalArgumentException;
+
+import android.annotation.TargetApi;
+import android.content.Context;
+import android.os.Build;
 import android.util.Log;
 import android.util.DisplayMetrics;
+
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.Canvas;
 import android.graphics.RectF;
 import android.graphics.PointF;
+import android.graphics.drawable.VectorDrawable;
+
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 
 public final class Utility {
     public static RectF fillImage(float imgWidth, float imgHeight, float targetWidth, float targetHeight, String mode) {
@@ -91,5 +105,32 @@ public final class Utility {
      */
     private static float crossProduct(float ax, float ay, float bx, float by, float cx, float cy) {
         return (ax - cx) * (by - cy) - (bx - cx) * (ay - cy);
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public static Bitmap getBitmap(VectorDrawable vectorDrawable) {
+        Log.w("sketch: vector height", String.valueOf(vectorDrawable.getIntrinsicHeight()));
+        Log.w("sketch: vector width", String.valueOf(vectorDrawable.getIntrinsicWidth()));
+        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(),
+                vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        vectorDrawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        vectorDrawable.draw(canvas);
+        return bitmap;
+    }
+
+    public static Bitmap getBitmap(Context context, int drawableId) {
+        Drawable drawable = ContextCompat.getDrawable(context, drawableId);
+        Log.w("SKETCH: drawable", drawable.toString());
+        if (drawable instanceof BitmapDrawable) {
+            Log.w("SKETCH: returning drawable", drawable.toString());
+            return BitmapFactory.decodeResource(context.getResources(), drawableId);
+        } else if (drawable instanceof VectorDrawable) {
+            Log.w("SKETCH: returning vector", "");
+            return getBitmap((VectorDrawable) drawable);
+        } else {
+            Log.w("SKETCH: oops", "not allowed buckaroo");
+            throw new IllegalArgumentException("unsupported drawable type");
+        }
     }
 }

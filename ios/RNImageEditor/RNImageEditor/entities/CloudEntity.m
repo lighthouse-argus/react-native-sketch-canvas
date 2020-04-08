@@ -8,6 +8,7 @@
 #import <Foundation/Foundation.h>
 #import "base/MotionEntity.h"
 #import "CloudEntity.h"
+#import "PocketSVG/PocketSVG.h"
 
 @implementation CloudEntity
 {
@@ -59,63 +60,28 @@
     CGFloat lineWidth = self.entityStrokeWidth / self.scale;
     CGContextSetLineWidth(contextRef, self.entityStrokeWidth / self.scale);
     CGContextSetStrokeColorWithColor(contextRef, [self.entityStrokeColor CGColor]);
-    
-    // CGRect entityRect = CGRectMake(0, 0, rect.size.width, rect.size.height);
-    // CGFloat padding = (self.bordersPadding + self.entityStrokeWidth) / self.scale;
-    // entityRect = CGRectInset(entityRect, padding , padding);
-    // [[UIColor redColor] setFill];
-    // UIRectFill(entityRect);
-    
-    // CGFloat radius = rect.size.width / 2;
-    
-    // CGRect circleRect = CGRectMake(0, 0, radius, radius);
-    // circleRect = CGRectInset(circleRect, padding , padding);
-    
-    // CGContextStrokeEllipseInRect(contextRef, circleRect);
-    // CGContextStrokeRect(contextRef, entityRect);
 
-    // CGContextRef context = UIGraphicsGetCurrentContext();
-    
-    CGFloat padding = (self.bordersPadding + self.entityStrokeWidth) / self.scale;
-    CGFloat radius = ((rect.size.width - padding) / 5) / 2;
-    CGPoint point = CGPointMake(radius + padding, radius + padding);
-//    CGFloat lineLength = 45.0;
-
-    for (int i = 0; i < 5; i++) {
-        CGContextAddArc(contextRef, point.x, point.y, radius, M_PI, M_PI * 2.0, NO);
-        point.x += radius * 2.0;
+    NSURL *url = [[NSBundle bundleForClass:[self class]] URLForResource:@"cloud" withExtension:@"svg"];
+    if (url != nil) {
+        NSArray<SVGBezierPath*> *paths = [SVGBezierPath pathsFromSVGAtURL: url];
+        CALayer *layer = [CALayer layer];
+        layer.frame = CGRectMake(0, 0, rect.size.width, rect.size.height);
+        for (SVGBezierPath *path in paths) {
+            CAShapeLayer *shapeLayer = [CAShapeLayer layer];
+            shapeLayer.path = path.CGPath;
+            CGRect entityRect = CGPathGetBoundingBox(path.CGPath);
+            CGFloat xScale = (rect.size.width / entityRect.size.width);
+            CGFloat yScale = (rect.size.height / entityRect.size.height);
+            [shapeLayer setTransform:CATransform3DMakeScale(0.3, 0.3, 1.0)];
+            [shapeLayer setLineWidth:self.entityStrokeWidth / self.scale];
+            [shapeLayer setFillColor: [self.entityStrokeColor CGColor]];
+            [shapeLayer setStrokeColor: [self.entityStrokeColor CGColor]];
+            [layer addSublayer: shapeLayer];
+        }
+        [layer setNeedsDisplay];
+        [layer renderInContext:contextRef];
     }
 
-    point.x -= radius;
-    point.y += radius;
-
-    for (int i = 0; i < 5; i++) {
-        CGContextAddArc(contextRef, point.x, point.y, radius, M_PI / 2.0, (3.0 * M_PI) / 2.0, YES);
-        point.y += radius * 2.0;
-    }
-
-    point.x -= radius;
-    point.y -= radius;
-
-    for (int i = 0; i < 5; i++) {
-        CGContextAddArc(contextRef, point.x, point.y, radius, M_PI, M_PI * 2.0, YES);
-        point.x -= radius * 2.0;
-    }
-
-    point.x += radius;
-    point.y -= radius;
-
-
-    for (int i = 0; i < 5; i++) {
-        CGContextAddArc(contextRef, point.x, point.y, radius, M_PI / 2.0, (3.0 * M_PI) / 2.0, NO);
-        point.y -= radius * 2.0;
-    }
-    // for (int i = 0; i < 5; i++) {
-    //     CGContextAddArc(contextRef, point.x, point.y, radius, (3.0 * M_PI) / 2.0, (M_PI / 2.0), YES);
-    //     point.y -= radius * 2.0;
-    // }
-
-    CGContextAddLineToPoint(contextRef, point.x, point.y);
     CGContextDrawPath(contextRef, kCGPathStroke);
 }
 

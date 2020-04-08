@@ -11,6 +11,8 @@ Pod::Spec.new do |s|
   s.authors      = package['author']
   s.source       = { :git => package['repository']['url'] }
   s.platform     = :ios, '8.0'
+  s.resources    = 'ios/**/*.{svg,png,jpeg,jpg,storyboard,xib,xcassets}'
   s.source_files = 'ios/**/*.{h,m}'
   s.dependency   'React'
+  s.dependency   'PocketSVG'
 end
