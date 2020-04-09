@@ -46,6 +46,7 @@ import com.wwimmo.imageeditor.utils.entities.EntityType;
 import com.wwimmo.imageeditor.utils.entities.CircleEntity;
 import com.wwimmo.imageeditor.utils.entities.RectEntity;
 import com.wwimmo.imageeditor.utils.entities.CloudEntity;
+import com.wwimmo.imageeditor.utils.entities.LineEntity;
 import com.wwimmo.imageeditor.utils.entities.MotionEntity;
 import com.wwimmo.imageeditor.utils.entities.TriangleEntity;
 import com.wwimmo.imageeditor.utils.entities.TextEntity;
@@ -622,6 +623,9 @@ public class ImageEditor extends View {
             case CLOUD:
                 addCloudEntity(entityId, 600, 600);
                 break;
+            case LINE:
+                addLineEntity(entityId, 600, 100);
+                break;
             default:
                 addCircleEntity(entityId);
                 break;
@@ -693,6 +697,19 @@ public class ImageEditor extends View {
         PointF center = cloudEntity.absoluteCenter();
         center.y = center.y * 0.5F;
         cloudEntity.moveCenterTo(center);
+
+        invalidateCanvas(true);
+    }
+
+    protected void addLineEntity(String entityId, int width, int height) {
+        Layer lineLayer = new Layer();
+        LineEntity lineEntity = null;
+        lineEntity = new LineEntity(entityId, lineLayer, mDrawingCanvas.getWidth(), mDrawingCanvas.getHeight(), width, height, 30f, mEntityStrokeWidth, mEntityStrokeColor);
+        addEntityAndPosition(lineEntity);
+
+        PointF center = lineEntity.absoluteCenter();
+        center.y = center.y * 0.5F;
+        lineEntity.moveCenterTo(center);
 
         invalidateCanvas(true);
     }

@@ -183,6 +183,9 @@ public class ImageEditorManager extends SimpleViewManager<ImageEditor> {
                     case "Cloud":
                         shapeType = EntityType.CLOUD;
                         break;
+                    case "Line":
+                        shapeType = EntityType.LINE;
+                        break;
                     default:
                         shapeType = EntityType.CIRCLE;
                         break;
