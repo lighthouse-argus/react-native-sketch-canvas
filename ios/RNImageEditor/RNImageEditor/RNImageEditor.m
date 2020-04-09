@@ -14,6 +14,7 @@
 #import "entities/ArrowEntity.h"
 #import "entities/TextEntity.h"
 #import "entities/CloudEntity.h"
+#import "entities/LineEntity.h"
 
 @implementation RNImageEditor
 {
@@ -595,7 +596,7 @@
 
 - (void)addEntityWithId:(NSString *)entityId entityType:(NSString *)entityType textShapeFontType:(NSString *)textShapeFontType textShapeFontSize:(NSNumber *)textShapeFontSize textShapeText:(NSString *)textShapeText imageShapeAsset:(NSString *)imageShapeAsset {
     
-    switch ([@[@"Circle", @"Rect", @"Square", @"Triangle", @"Arrow", @"Text", @"Image", @"Cloud"] indexOfObject: entityType]) {
+    switch ([@[@"Circle", @"Rect", @"Square", @"Triangle", @"Arrow", @"Text", @"Image", @"Cloud", @"Line"] indexOfObject: entityType]) {
         case 1:
             [self addRectEntity:entityId width:300 andHeight:150];
             break;
@@ -613,8 +614,11 @@
             break;
         case 6:
             // TODO: ImageEntity Doesn't exist yet
-        case 7: 
+        case 7:
             [self addCloudEntity:entityId width:300 andHeight:300];
+            break;
+        case 8:
+            [self addLineEntity:entityId width:300 andHeight:50];
             break;
         case 0:
         case NSNotFound:
@@ -670,6 +674,31 @@
                           entityStrokeColor:self.entityStrokeColor
                           entityId: entityId];
     
+    [self.motionEntities addObject:entity];
+    [self onShapeSelectionChanged:entity];
+    [self selectEntity:entity];
+}
+
+- (void)addLineEntity:(NSString *)entityId width:(NSInteger)width andHeight: (NSInteger)height {
+    CGFloat centerX = CGRectGetMidX(self.bounds);
+    CGFloat centerY = CGRectGetMidY(self.bounds);
+
+    LineEntity *entity = [[LineEntity alloc]
+                          initAndSetupWithParent:self.bounds.size.width
+                          parentHeight:self.bounds.size.height
+                          parentCenterX:centerX
+                          parentCenterY:centerY
+                          parentScreenScale:self.window.screen.scale
+                          width:width
+                          height:height
+                          bordersPadding:5.0f
+                          borderStyle:self.entityBorderStyle
+                          borderStrokeWidth:self.entityBorderStrokeWidth
+                          borderStrokeColor:self.entityBorderColor
+                          entityStrokeWidth:self.entityStrokeWidth
+                          entityStrokeColor:self.entityStrokeColor
+                          entityId: entityId];
+
     [self.motionEntities addObject:entity];
     [self onShapeSelectionChanged:entity];
     [self selectEntity:entity];
