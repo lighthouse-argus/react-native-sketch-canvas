@@ -59,11 +59,14 @@
     CGContextSetLineWidth(contextRef, self.entityStrokeWidth / self.scale);
     CGContextSetStrokeColorWithColor(contextRef, [self.entityStrokeColor CGColor]);
 
+    CGFloat padding = (self.bordersPadding + self.entityStrokeWidth) / self.scale;
+
     CGContextBeginPath(contextRef);
     UIBezierPath *path = [UIBezierPath bezierPath];
     [path moveToPoint:CGPointMake(padding, rect.size.height / 2)];
-    [path moveToPoint:CGPointMake(rect.size.width - padding, rect.size.height / 2)];
+    [path addLineToPoint:CGPointMake(rect.size.width - padding, rect.size.height / 2)];
     CGContextAddPath(contextRef, path.CGPath);
+    CGContextDrawPath(contextRef, kCGPathStroke);
 }
 
 @end
