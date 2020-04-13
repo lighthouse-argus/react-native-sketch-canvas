@@ -36,21 +36,16 @@ public class Layer {
     protected void reset() {
         this.mRotationInDegrees = 0.0F;
         this.mScale = 1.0F;
+        this.scaleX = 1.0F;
+        this.scaleY = 1.0F;
         this.mIsFlipped = false;
         this.x = 0.0F;
         this.y = 0.0F;
     }
 
-    public void postScale(float scaleDiff) {
-        float newVal = mScale + scaleDiff;
-        if (newVal >= getMinScale() && newVal <= getMaxScale()) {
-            mScale = newVal;
-        }
-    }
-
     public void postScale(float scaleDiffX, float scaleDiffY) {
-        float newX = scaleX * scaleDiffX;
-        float newY = scaleY * scaleDiffY;
+        float newX = scaleX + scaleDiffX;
+        float newY = scaleY + scaleDiffY;
         if (newX >= getMinScale() && newX <= getMaxScale()) {
             scaleX = newX;
         }
@@ -98,11 +93,11 @@ public class Layer {
     }
 
     public float getScaleX() {
-        return mScale;
+        return scaleX;
     }
 
     public float getScaleY() {
-        return mScale;
+        return scaleY;
     }
 
     public void setScale(float scale) {
