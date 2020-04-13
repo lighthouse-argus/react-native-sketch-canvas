@@ -988,6 +988,7 @@ public class ImageEditor extends View {
         private float lastSpan;
         private float lastX;
         private float lastY;
+        private float slope = -1;
 
         @Override
         public boolean onScaleBegin(ScaleGestureDetector scaleGestureDetector) {
@@ -1000,50 +1001,53 @@ public class ImageEditor extends View {
         }
 
         @Override
+        public void onScaleEnd(ScaleGestureDetector scaleGestureDetector) {
+            slope = -1;
+        }
+
+        @Override
         public boolean onScale(ScaleGestureDetector scaleGestureDetector) {
             if (mSelectedEntity != null) {
-                float scaleFactorDiff = scaleGestureDetector.getScaleFactor();
-                mSelectedEntity.getLayer().postScale(scaleFactorDiff - 1.0F);
-                // float spanX = scaleGestureDetector.getCurrentSpanX();
-                // float spanY = scaleGestureDetector.getCurrentSpanY();
-                // float span = scaleGestureDetector.getCurrentSpan();
-                // float currentX = scaleGestureDetector.getFocusX();
-                // float currentY = scaleGestureDetector.getFocusY();
+                float spanX = scaleGestureDetector.getCurrentSpanX();
+                float spanY = scaleGestureDetector.getCurrentSpanY();
+                float span = scaleGestureDetector.getCurrentSpan();
+                float currentX = scaleGestureDetector.getFocusX();
+                float currentY = scaleGestureDetector.getFocusY();
 
-                // // Ensure we don't accidentally scale what was meant to be a rotate
-                // // Log.w("SKETCHCANVAS span", String.valueOf(span));
-                // float diff = Math.abs(span - lastSpan);
-                // if (diff < 35.0f) {
-                //     return false;
-                // }
-                // // Log.w("SKETCHCANVAS diff", String.valueOf(diff));
+                // Ensure we don't accidentally scale what was meant to be a rotate
+                float diff = Math.abs(span - lastSpan);
+                if (diff < 35.0f) {
+                    return false;
+                }
 
-                // float scaleFactorX = spanX / lastSpanX;
-                // float scaleFactorY = spanY / lastSpanY;
+                float scaleFactorX = spanX / lastSpanX;
+                float scaleFactorY = spanY / lastSpanY;
 
-                // float slope = 0;
-                // if (currentX == lastX) {
-                //     slope = 1000;
-                // } else if (currentY == lastY) {
-                //     slope = 0;
-                // } else {
-                //     slope = Math.abs((currentY - lastY) / (currentX - lastX));
-                // }
+                // Slope is set once per pinch
+                if (slope < 0) {
+                    if (currentX == lastX) {
+                        slope = 1000;
+                    } else if (currentY == lastY) {
+                        slope = 0;
+                    } else {
+                        slope = Math.abs((currentY - lastY) / (currentX - lastX));
+                    }
+                }
 
-                // if (slope < 0.35f) {
-                //     mSelectedEntity.getLayer().postScale(scaleFactorX, 1);
-                // } else if (slope > 1.7f) {
-                //     mSelectedEntity.getLayer().postScale(1, scaleFactorY);
-                // } else {
-                //     mSelectedEntity.getLayer().postScale(scaleFactorX, scaleFactorX);
-                // }
+                // We set min/max for smooth scrolling
+                float MIN_SCALE = 0.985f;
+                float MAX_SCALE = 1.015f;
+                float scaleFactorXFinal = scaleFactorX < MIN_SCALE ? MIN_SCALE : (scaleFactorX > MAX_SCALE ? MAX_SCALE : scaleFactorX);
+                float scaleFactorYFinal = scaleFactorY < MIN_SCALE ? MIN_SCALE : (scaleFactorY > MAX_SCALE ? MAX_SCALE : scaleFactorY);
 
-                // lastSpanX = spanX;
-                // lastSpanY = spanY;
-                // lastSpan = span;
-                // not sure about this...
-                // lastX = currentX;
-                // lastY = currentY;
+                if (slope < 0.45f) {
+                    mSelectedEntity.getLayer().postScale(scaleFactorXFinal - 1.0f, 0);
+                } else if (slope > 3.0f) {
+                    mSelectedEntity.getLayer().postScale(0, scaleFactorYFinal - 1.0f);
+                } else {
+                    mSelectedEntity.getLayer().postScale(scaleFactorXFinal - 1.0f, scaleFactorXFinal - 1.0f);
+                }
+
                 invalidateCanvas(true);
                 return true;
             }
