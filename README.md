@@ -1,6 +1,18 @@
 react-native-sketch-canvas feature extension
 ===================
 
+This repo is a fork of <a href="https://github.com/wwimmo/react-native-sketch-image">wwimmo/react-native-sketch-image</a>
+
+Fork Features
+-------------
+:white_check_mark: Undo/Clear for shapes
+
+:white_check_mark: X/Y Shape Scaling
+
+:white_check_mark: Cloud/Line Shapes
+
+
+
 THIS IS A FORK: Added Movable, Scalable and Rotatable Shapes (Geometry shapes and Text Sticker).
 
 New Properties: 
