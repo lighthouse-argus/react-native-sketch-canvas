@@ -10,20 +10,20 @@ import ReactNative, {
     PixelRatio,
     Platform,
     ViewPropTypes,
-    processColor
+    processColor,
 } from "react-native";
 import { requestPermissions } from "./handlePermissions";
 
 const RNImageEditor = requireNativeComponent("RNImageEditor", ImageEditor, {
     nativeOnly: {
         nativeID: true,
-        onChange: true
-    }
+        onChange: true,
+    },
 });
 const ImageEditorManager = NativeModules.RNImageEditorManager || {};
 
-const PATH = 'path';
-const SHAPE = 'shape';
+const PATH = "path";
+const SHAPE = "shape";
 
 class ImageEditor extends React.Component {
     static propTypes = {
@@ -41,13 +41,12 @@ class ImageEditor extends React.Component {
             shapeBorderStyle: PropTypes.string,
             shapeBorderStrokeWidth: PropTypes.number,
             shapeColor: PropTypes.string,
-            shapeStrokeWidth: PropTypes.number
+            shapeStrokeWidth: PropTypes.number,
         }),
         user: PropTypes.string,
         scale: PropTypes.number,
-
+        rotation: PropTypes.number,
         touchEnabled: PropTypes.bool,
-
         text: PropTypes.arrayOf(
             PropTypes.shape({
                 text: PropTypes.string,
@@ -59,17 +58,17 @@ class ImageEditor extends React.Component {
                 position: PropTypes.shape({ x: PropTypes.number, y: PropTypes.number }),
                 coordinate: PropTypes.oneOf(["Absolute", "Ratio"]),
                 alignment: PropTypes.oneOf(["Left", "Center", "Right"]),
-                lineHeightMultiple: PropTypes.number
+                lineHeightMultiple: PropTypes.number,
             })
         ),
         localSourceImage: PropTypes.shape({
             filename: PropTypes.string,
             directory: PropTypes.string,
-            mode: PropTypes.oneOf(["AspectFill", "AspectFit", "ScaleToFill"])
+            mode: PropTypes.oneOf(["AspectFill", "AspectFit", "ScaleToFill"]),
         }),
 
         permissionDialogTitle: PropTypes.string,
-        permissionDialogMessage: PropTypes.string
+        permissionDialogMessage: PropTypes.string,
     };
 
     static defaultProps = {
@@ -82,28 +81,28 @@ class ImageEditor extends React.Component {
         onStrokeEnd: () => {},
         onSketchSaved: () => {},
         onShapeSelectionChanged: () => {},
+        rotation: 0,
         shapeConfiguration: {
             shapeBorderColor: "transparent",
             shapeBorderStyle: "Dashed",
             shapeBorderStrokeWidth: 1,
             shapeColor: "#000000",
-            shapeStrokeWidth: 3
+            shapeStrokeWidth: 3,
         },
         user: null,
         scale: 1,
-
         touchEnabled: true,
 
         text: null,
         localSourceImage: null,
 
         permissionDialogTitle: "",
-        permissionDialogMessage: ""
+        permissionDialogMessage: "",
     };
 
     state = {
         text: null,
-        hasPanResponder: false
+        hasPanResponder: false,
     };
 
     constructor(props) {
@@ -111,6 +110,7 @@ class ImageEditor extends React.Component {
         this._pathsToProcess = [];
         this._paths = [];
         this._shapes = [];
+        this._copy = [];
         this._history = [];
         this._path = null;
         this._handle = null;
@@ -121,14 +121,14 @@ class ImageEditor extends React.Component {
 
         this.state = {
             text: ImageEditor.processText(props.text ? props.text.map((t) => Object.assign({}, t)) : null),
-            hasPanResponder: false
+            hasPanResponder: false,
         };
     }
 
     static getDerivedStateFromProps(nextProps, prevState) {
         if (nextProps.text) {
             return {
-                text: ImageEditor.processText(nextProps.text ? nextProps.text.map((t) => Object.assign({}, t)) : null)
+                text: ImageEditor.processText(nextProps.text ? nextProps.text.map((t) => Object.assign({}, t)) : null),
             };
         } else {
             return null;
@@ -143,7 +143,7 @@ class ImageEditor extends React.Component {
     componentDidUpdate(prevProps, prevState) {
         if (prevState.text !== this.state.text) {
             this.setState({
-                text: this.state.text
+                text: this.state.text,
             });
         }
     }
@@ -156,7 +156,7 @@ class ImageEditor extends React.Component {
             UIManager.getViewManagerConfig(RNImageEditor).Commands.clear,
             []
         );
-        this._shapes.forEach(shape => {
+        this._shapes.forEach((shape) => {
             this.deleteShapeById(shape.id);
         });
         this._shapes = [];
@@ -170,17 +170,40 @@ class ImageEditor extends React.Component {
         }
     }
 
+    lastRemoved() {
+        if (this._copy.length > 0) {
+            return this._copy.pop();
+        } else {
+            return null;
+        }
+    }
+
     undo() {
         let _lastAdded = this.lastAdded();
         if (_lastAdded && _lastAdded.type == PATH) {
-            let data = this._paths.find(x => x.path.id == _lastAdded.id);
+            let data = this._paths.find((x) => x.path.id == _lastAdded.id);
             if (data && data.path && data.path.id) {
+                this._copy.push({ type: PATH, data });
                 this.deletePath(data.path.id);
             }
         } else if (_lastAdded && _lastAdded.type == SHAPE) {
-            let shape = this._shapes.find(x => x.id == _lastAdded.id);
+            let shape = this._shapes.find((x) => x.id == _lastAdded.id);
             if (shape && shape.id) {
+                this._copy.push({ type: SHAPE, data: shape });
                 this.deleteShapeById(shape.id);
+            }
+        }
+    }
+
+    redo() {
+        let _lastRemoved = this.lastRemoved();
+        if (_lastRemoved && _lastRemoved.type == PATH) {
+            if (_lastRemoved && _lastRemoved.data && _lastRemoved.data.path.id) {
+                this.addPath(_lastRemoved.data);
+            }
+        } else if (_lastRemoved && _lastRemoved.type == SHAPE) {
+            if (_lastRemoved && _lastRemoved.data && _lastRemoved.data.id) {
+                this.addShape(_lastRemoved.data);
             }
         }
     }
@@ -193,10 +216,9 @@ class ImageEditor extends React.Component {
             }
             const pathData = data.path.data.map((p) => {
                 const coor = p.split(",").map((pp) => parseFloat(pp).toFixed(2));
-                return `${(coor[0] * this._screenScale * this._size.width) / data.size.width},${(coor[1] *
-                    this._screenScale *
-                    this._size.height) /
-                    data.size.height}`;
+                return `${(coor[0] * this._screenScale * this._size.width) / data.size.width},${
+                    (coor[1] * this._screenScale * this._size.height) / data.size.height
+                }`;
             });
             UIManager.dispatchViewManagerCommand(
                 this._handle,
@@ -220,14 +242,21 @@ class ImageEditor extends React.Component {
 
     addShape(config) {
         if (config) {
-            let id =  Math.random().toString(36).substr(2, 9);
-            this._shapes.push({ id, ...config });
-            this._history.push({ type: SHAPE, id: id });
+            let shapeId = config.id ? config.id : Math.random().toString(36).substr(2, 9);
+            this._shapes.push({ id: shapeId, ...config });
+            this._history.push({ type: SHAPE, id: shapeId });
             let fontSize = config.textShapeFontSize ? config.textShapeFontSize : 0;
             UIManager.dispatchViewManagerCommand(
                 this._handle,
                 UIManager.getViewManagerConfig(RNImageEditor).Commands.addShape,
-                [id, config.shapeType, config.textShapeFontType, fontSize, config.textShapeText, config.imageShapeAsset]
+                [
+                    shapeId,
+                    config.shapeType,
+                    config.textShapeFontType,
+                    fontSize,
+                    config.textShapeText,
+                    config.imageShapeAsset,
+                ]
             );
         }
     }
@@ -337,9 +366,11 @@ class ImageEditor extends React.Component {
                     id: parseInt(Math.random() * 100000000),
                     color: this.props.strokeColor,
                     width: this.props.strokeWidth,
-                    data: []
+                    data: [],
                 };
 
+                const x = parseFloat((gestureState.x0 - this._offset.x).toFixed(2)),
+                    y = parseFloat((gestureState.y0 - this._offset.y).toFixed(2));
                 UIManager.dispatchViewManagerCommand(
                     this._handle,
                     UIManager.getViewManagerConfig(RNImageEditor).Commands.newPath,
@@ -348,14 +379,9 @@ class ImageEditor extends React.Component {
                 UIManager.dispatchViewManagerCommand(
                     this._handle,
                     UIManager.getViewManagerConfig(RNImageEditor).Commands.addPoint,
-                    [
-                        parseFloat((gestureState.x0 - this._offset.x).toFixed(2) * this._screenScale),
-                        parseFloat((gestureState.y0 - this._offset.y).toFixed(2) * this._screenScale),
-                        false
-                    ]
+                    [parseFloat(x.toFixed(2) * this._screenScale), parseFloat(y.toFixed(2) * this._screenScale), true]
                 );
-                const x = parseFloat((gestureState.x0 - this._offset.x).toFixed(2)),
-                    y = parseFloat((gestureState.y0 - this._offset.y).toFixed(2));
+
                 this._path.data.push(`${x},${y}`);
                 this.props.onStrokeStart(x, y);
             },
@@ -363,17 +389,22 @@ class ImageEditor extends React.Component {
                 if (!this.props.touchEnabled) return;
                 if (Math.abs(gestureState.dx) < 2.5 || Math.abs(gestureState.dy) < 2.5) return;
                 if (this._path) {
-                    const x = parseFloat(
-                            (gestureState.x0 + gestureState.dx / this.props.scale - this._offset.x).toFixed(2)
-                        ),
-                        y = parseFloat(
-                            (gestureState.y0 + gestureState.dy / this.props.scale - this._offset.y).toFixed(2)
-                        );
+                    const clockwiseRotationModifier = -1;
+                    const rotationAsRadians = this.props.rotation * (Math.PI / 90) * clockwiseRotationModifier;
+
+                    const rotated_dx =
+                        Math.cos(rotationAsRadians) * gestureState.dx - Math.sin(rotationAsRadians) * gestureState.dy;
+                    const rotated_dy =
+                        Math.sin(rotationAsRadians) * gestureState.dx + Math.cos(rotationAsRadians) * gestureState.dy;
+
+                    const x = parseFloat((gestureState.x0 + rotated_dx / this.props.scale - this._offset.x).toFixed(2));
+                    const y = parseFloat((gestureState.y0 + rotated_dy / this.props.scale - this._offset.y).toFixed(2));
                     UIManager.dispatchViewManagerCommand(
                         this._handle,
                         UIManager.getViewManagerConfig(RNImageEditor).Commands.addPoint,
                         [parseFloat(x * this._screenScale), parseFloat(y * this._screenScale), true]
                     );
+
                     this._path.data.push(`${x},${y}`);
                     this.props.onStrokeChanged(x, y);
                 }
@@ -383,7 +414,7 @@ class ImageEditor extends React.Component {
                 if (this._path) {
                     this.props.onStrokeEnd({ path: this._path, size: this._size, drawer: this.props.user });
                     this._paths.push({ path: this._path, size: this._size, drawer: this.props.user });
-                    this._history.push({ type: PATH, id: this._path.id})
+                    this._history.push({ type: PATH, id: this._path.id });
                 }
                 UIManager.dispatchViewManagerCommand(
                     this._handle,
@@ -394,10 +425,10 @@ class ImageEditor extends React.Component {
 
             onShouldBlockNativeResponder: (evt, gestureState) => {
                 return true;
-            }
+            },
         });
         this.setState({
-            hasPanResponder: true
+            hasPanResponder: true,
         });
     }
 
@@ -434,7 +465,7 @@ class ImageEditor extends React.Component {
                     shapeBorderStyle: this.props.shapeConfiguration.shapeBorderStyle,
                     shapeBorderStrokeWidth: this.props.shapeConfiguration.shapeBorderStrokeWidth,
                     shapeColor: processColor(this.props.strokeColor),
-                    shapeStrokeWidth: this.props.strokeWidth
+                    shapeStrokeWidth: this.props.strokeWidth,
                 }}
                 text={this.state.text}
             />
