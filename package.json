@@ -1,10 +1,10 @@
 {
-    "name": "@dansiemens/react-native-sketch-canvas",
+    "name": "@akayush/react-native-sketch-canvas",
     "repository": {
         "type": "git",
-        "url": "https://github.com/dansiemens/react-native-sketch-canvas"
+        "url": "https://github.com/AkAyush/react-native-sketch-canvas"
     },
-    "version": "1.0.5",
+    "version": "1.0.6",
     "description": "react-native-sketch-canvas allows you to draw / sketch on both iOS and Android devices and sync the drawing data between users. Of course you can save as image.",
     "author": "Terry Lin, Thomas Steinbrüchel, Dan Siemens",
     "main": "index.js",
