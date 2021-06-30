@@ -18,7 +18,7 @@ import android.view.View;
 import android.view.ScaleGestureDetector;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
-import android.support.v4.view.GestureDetectorCompat;
+import androidx.core.view.GestureDetectorCompat;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.WritableMap;
@@ -359,7 +359,6 @@ public class ImageEditor extends View {
     public void onShapeSelectionChanged(MotionEntity nextSelectedEntity) {
         final WritableMap event = Arguments.createMap();
         boolean isShapeSelected = nextSelectedEntity != null;
-        event.putBoolean("isShapeSelected", isShapeSelected);
 
         if (!isShapeSelected) {
             // This is ugly and actually was my last resort to fix the "do not draw when deselecting" problem
@@ -374,10 +373,22 @@ public class ImageEditor extends View {
                 }
             }, 250);
         } else {
-            mContext.getJSModule(RCTEventEmitter.class).receiveEvent(
-                    getId(),
-                    "topChange",
-                    event);
+            selectEntity(nextSelectedEntity);
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    TextEntity textEntity = getSelectedTextEntity();
+                    if(textEntity != null){
+                        event.putString("shapeText",textEntity.getLayer().getText());
+                    }
+                    mContext.getJSModule(RCTEventEmitter.class).receiveEvent(
+                            getId(),
+                            "topChange",
+                            event);
+                }
+            }, 250);
+
+
         }
     }
 
