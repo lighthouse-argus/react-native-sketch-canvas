@@ -1006,12 +1006,16 @@
     if (nextEntity) {
         isShapeSelected = YES;
     }
-    if (_onChange) {
+   if (_onChange) {
         if (isShapeSelected) {
-            _onChange(@{ @"isShapeSelected": @YES });
+            // If it's a class entity, we add back the shapeText
+            if (nextEntity && [nextEntity isKindOfClass:[TextEntity class]]) {
+                _onChange(@{ @"isShapeSelected": @YES, @"shapeText": ((TextEntity *)nextEntity).text });
+            } else {
+                _onChange(@{ @"isShapeSelected": @YES, @"shapeText": @"" });
+            }
         } else {
-            // Add delay!
-            _onChange(@{ @"isShapeSelected": @NO });
+            _onChange(@{ @"isShapeSelected": @NO, @"shapeText": @"" });
         }
     }
 }
