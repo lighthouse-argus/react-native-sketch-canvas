@@ -390,7 +390,7 @@ class ImageEditor extends React.Component {
                 if (Math.abs(gestureState.dx) < 2.5 || Math.abs(gestureState.dy) < 2.5) return;
                 if (this._path) {
                     const clockwiseRotationModifier = -1;
-                    const rotationAsRadians = this.props.rotation * (Math.PI / 90) * clockwiseRotationModifier;
+                    const rotationAsRadians = this.props.rotation * (Math.PI / 180) * clockwiseRotationModifier;
 
                     const rotated_dx =
                         Math.cos(rotationAsRadians) * gestureState.dx - Math.sin(rotationAsRadians) * gestureState.dy;
