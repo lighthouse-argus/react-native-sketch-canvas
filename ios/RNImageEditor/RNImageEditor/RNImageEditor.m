@@ -142,7 +142,7 @@
                    borderStrokeWidth:self.entityBorderStrokeWidth
                    borderStrokeColor:self.entityBorderColor
                    entityStrokeWidth:self.entityStrokeWidth
-                   entityStrokeColor:self.entityStrokeColor];
+                   entityStrokeColor:[UIColor blackColor]];
 
         if ([entity isSelected]) {
             [entity setNeedsDisplay];
