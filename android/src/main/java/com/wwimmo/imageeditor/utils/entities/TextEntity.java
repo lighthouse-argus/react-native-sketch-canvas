@@ -5,9 +5,9 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
-import android.support.annotation.IntRange;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.IntRange;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
@@ -77,7 +77,7 @@ public class TextEntity extends MotionEntity {
         TextLayer layer = getLayer();
         textPaint.setStyle(Paint.Style.FILL);
         textPaint.setTextSize(layer.getFont().getSize() * canvasWidth);
-        textPaint.setColor(layer.getFont().getColor());
+        textPaint.setColor(Color.BLACK);
         textPaint.setTypeface(layer.getFont().getTypeface());
 
         // drawing text guide : http://ivankocijan.xyz/android-drawing-multiline-text-on-canvas/
@@ -131,7 +131,7 @@ public class TextEntity extends MotionEntity {
         if (paint != null && isSelected()) {
             int color = paint.getColor();
             getLayer().getFont().setColor(color);
-            textPaint.setColor(color);
+            textPaint.setColor(Color.BLACK);
         }
     }
 
