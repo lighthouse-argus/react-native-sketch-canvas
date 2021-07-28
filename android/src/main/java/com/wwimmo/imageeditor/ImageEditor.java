@@ -379,6 +379,7 @@ public class ImageEditor extends View {
                 public void run() {
                     TextEntity textEntity = getSelectedTextEntity();
                     if(textEntity != null){
+                        event.putBoolean("isShapeSelected",true);
                         event.putString("shapeText",textEntity.getLayer().getText());
                     }
                     mContext.getJSModule(RCTEventEmitter.class).receiveEvent(
